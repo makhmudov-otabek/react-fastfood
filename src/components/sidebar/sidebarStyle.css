@@ -1,0 +1,8 @@
+.buttonFocused {
+  background-color: rgba(252, 182, 0, 0.9) !important;
+  color: white !important;
+}
+.buttonUnFocused {
+  background-color: white !important;
+  color: black !important;
+}
