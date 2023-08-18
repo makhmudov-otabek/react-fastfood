@@ -33,6 +33,8 @@ function App() {
     defaultValue: false,
   });
 
+  console.log("push git");
+
   const navigate = useNavigate();
   const location = useLocation();
 
