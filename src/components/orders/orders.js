@@ -365,8 +365,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const OredersHorizontalLayout = ({ filterIndex }) => {
   const params = useSearchParams();
 
-  console.log("changed");
-
   // const [updatedFilterIndex, setupdatedFilterIndex] = useState(1);
 
   let filterType =
@@ -407,49 +405,61 @@ const OredersHorizontalLayout = ({ filterIndex }) => {
             borderBottomLeftRadius: "5px",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-            }}
-          >
-            <Typography
+          <Box sx={{ paddingLeft: "20px" }}>
+            <Box
               sx={{
-                padding: "3px 25px",
-                borderRadius: "50px",
-                backgroundColor: "rgba(32, 212, 114, 1)",
-                color: "white",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                justifyContent: "start",
+                gap: "25px",
+                textAlign: "center",
               }}
             >
-              {order.id}
-            </Typography>
-            <TurnedInNotIcon
-              sx={{
-                background: "rgba(237, 239, 243, 1)",
-                width: "30px",
-                height: "30px",
-                padding: "5px",
-                borderRadius: "50px",
-                cursor: "pointer",
-                color: "rgba(45, 58, 69, 0.6)",
-              }}
-            ></TurnedInNotIcon>
-          </Box>
-          <Box
-            sx={{
-              marginTop: "30px",
-              paddingLeft: "23px",
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "center",
-              gap: "17px",
-            }}
-          >
-            <AccessTimeIcon
-              sx={{ color: "rgba(45, 58, 69, 0.6)" }}
-            ></AccessTimeIcon>
-            <Typography>{order.time}</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                  alignItems: "center",
+                  gap: "15px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    padding: "3px 25px",
+                    borderRadius: "50px",
+                    backgroundColor: "rgba(32, 212, 114, 1)",
+                    color: "white",
+                  }}
+                >
+                  {order.id}
+                </Typography>
+                <TurnedInNotIcon
+                  sx={{
+                    background: "rgba(237, 239, 243, 1)",
+                    width: "30px",
+                    height: "30px",
+                    padding: "5px",
+                    borderRadius: "50px",
+                    cursor: "pointer",
+                    color: "rgba(45, 58, 69, 0.6)",
+                  }}
+                ></TurnedInNotIcon>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                  gap: "17px",
+                }}
+              >
+                <AccessTimeIcon
+                  sx={{ color: "rgba(45, 58, 69, 0.6)" }}
+                ></AccessTimeIcon>
+                <Typography>{order.time}</Typography>
+              </Box>
+            </Box>
           </Box>
         </Box>
         <Box
@@ -673,10 +683,6 @@ const ShowOrders = () => {
                 }}
               >
                 <SwipeableTemporaryDrawer></SwipeableTemporaryDrawer>
-
-                <Typography sx={{ fontSize: "13px", fontWeight: "bold" }}>
-                  Yangi buyurtma <br /> qo’shish
-                </Typography>
               </Box>
               <Box
                 sx={{
@@ -690,7 +696,7 @@ const ShowOrders = () => {
               >
                 <Box
                   sx={{
-                    px: "20px",
+                    px: "11px",
                     py: "8px",
                     display: "flex",
                     justifyContent: "center",

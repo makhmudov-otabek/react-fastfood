@@ -86,11 +86,11 @@ const PermanentDrawerLeft = () => {
               handleButtonClick(1);
               navigate("/");
             }}
+            className={
+              activatedButton === 1 ? "buttonFocused" : "buttonUnFocused"
+            }
           >
             <ListItemButton
-              className={
-                activatedButton === 1 ? "buttonFocused" : "buttonUnFocused"
-              }
               sx={{
                 borderLeft: "5px solid rgba(252, 182, 0, 1)",
                 paddingTop: "10px",
@@ -101,7 +101,6 @@ const PermanentDrawerLeft = () => {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
                 },
-
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
@@ -110,7 +109,7 @@ const PermanentDrawerLeft = () => {
               <ListItemIcon>
                 <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary={"Buyurtmalar"} />
+              <ListItemText primary={"Orders"} />
             </ListItemButton>
           </ListItem>
           <ListItem
@@ -216,7 +215,7 @@ const PermanentDrawerLeft = () => {
               <ListItemIcon>
                 <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary={"Filiallar"} />
+              <ListItemText primary={"Fliallar"} />
             </ListItemButton>
           </ListItem>
           <ListItem

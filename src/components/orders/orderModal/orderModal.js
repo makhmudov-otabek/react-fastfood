@@ -5,14 +5,27 @@ import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import { Fragment } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
+import TextField from "@mui/material/TextField";
 
 import { useContext, useState } from "react";
 import ApiContext from "../../../context/context";
 import { Typography } from "@mui/material";
+import { borderRadius } from "@mui/system";
+import { BiTrash } from "react-icons/bi";
+import { orderesData } from "../../../data/ordersData";
 
-const ShowProducts = ({ categoryId }) => {
+import { useEffect } from "react";
+
+const ShowProducts = ({
+  categoryId,
+  collectAddButtonIds,
+  decrementProduct,
+  incrementProduct,
+  orderProducts,
+}) => {
   const { categories } = useContext(ApiContext);
   const { products } = useContext(ApiContext);
 
@@ -30,19 +43,24 @@ const ShowProducts = ({ categoryId }) => {
         }}
       >
         {filteredProducts.map((product) => {
+          const productId = product.id;
           return (
             <Grid
               key={product.productName}
               xs={6}
               sx={{
-                padding: " 10px",
+                padding: "10px",
               }}
             >
               <Box
                 sx={{
-                  boxShadow: "0px 20px 25px 0px rgba(176, 177, 181, 0.43)",
+                  boxShadow: "0px 2px 2px 0px #AEB0B550",
                   borderRadius: "5px",
                   overflow: "hidden",
+                  height: "100%",
+                  "&:hover": {
+                    boxShadow: "0px 20px 25px 0px rgba(176, 177, 181, 0.43)",
+                  },
                 }}
               >
                 <Box sx={{ widht: "100%" }}>
@@ -66,17 +84,87 @@ const ShowProducts = ({ categoryId }) => {
                   <Box
                     sx={{
                       mt: "15px",
+                      mb: "10px",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
                     }}
                   >
                     <Typography sx={{ fontWeight: "bold" }}>
-                      5,000 <Typography sx>UZS</Typography>
+                      {product.price}{" "}
+                      <span style={{ fontWeight: "lighter" }}>UZS</span>
                     </Typography>
-                    <Button variant="contained" sx={{}}>
-                      + Qo'shish
-                    </Button>
+
+                    {orderProducts[productId]?.count > 0 ? (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          border: "1px solid #EDEFF3",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            decrementProduct(productId);
+                          }}
+                          sx={{
+                            p: 0,
+                            minWidth: "40px",
+                            height: "24px",
+                            color: "black",
+                            "&:hover": {
+                              backgroundColor: "transparent",
+                            },
+                            "&:active": {
+                              opacity: "0.7",
+                            },
+                          }}
+                        >
+                          <RemoveIcon sx={{ fontSize: "20px" }} />
+                        </Button>
+
+                        <Typography sx={{ px: "10px" }}>
+                          {orderProducts[productId]?.count}
+                        </Typography>
+                        <Button
+                          onClick={() => {
+                            incrementProduct(productId);
+                          }}
+                          sx={{
+                            p: 0,
+                            minWidth: "40px",
+                            height: "24px",
+                            color: "black",
+                            "&:hover": {
+                              backgroundColor: "transparent",
+                            },
+                            "&:active": {
+                              opacity: "0.7",
+                            },
+                          }}
+                        >
+                          <AddIcon sx={{ fontSize: "20px" }} />
+                        </Button>
+                      </Box>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          fontSize: "11px",
+                          px: "7px",
+                          backgroundColor: "#20D472",
+                          "&:hover": {
+                            backgroundColor: "#20D472",
+                          },
+                        }}
+                        onClick={() => {
+                          collectAddButtonIds(product.id);
+                        }}
+                      >
+                        <AddIcon /> Qo'shish
+                      </Button>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -93,10 +181,79 @@ const SwipeableTemporaryDrawer = () => {
     right: false,
   });
 
+  const [activatedButton, setActivatedButton] = useState(0);
+
+  const [filterIndex, setFilterIndex] = useState(1);
+
+  const [currentTime, setCurrentTime] = useState("");
+
+  const { products } = useContext(ApiContext);
+
+  const [orderProducts, setOrderProducts] = useState({});
+
   const { categories } = useContext(ApiContext);
 
-  const [activatedButton, setActivatedButton] = useState(1);
-  const [filterIndex, setFilterIndex] = useState(1);
+  const { orders, setOrders } = useContext(ApiContext);
+
+  const [newUserInfo, setNewUserInfo] = useState({
+    name: "",
+    phone: "",
+    address: "",
+  });
+
+  let totalSum = 0;
+
+  const takeUserInfoOnChange = (name, value) => {
+    setNewUserInfo((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const collectAddButtonIds = (id) => {
+    setOrderProducts((prevState) => ({
+      ...prevState,
+      [id]: { count: 1, product: products[id - 1] },
+    }));
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const time = `${hours}:${minutes}`;
+      setCurrentTime(time);
+    }, 1000); // Har 1 sekundda bir yangilaydi
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+  const decrementProduct = (id) => {
+    let updatedProductOrderCount = orderProducts[id].count;
+
+    if (updatedProductOrderCount.count < 0) return;
+
+    updatedProductOrderCount -= 1;
+
+    setOrderProducts((prevState) => ({
+      ...prevState,
+      [id]: {
+        count: updatedProductOrderCount,
+        product: products[id - 1],
+        totalSum: totalSum,
+      },
+    }));
+  };
+
+  const incrementProduct = (id) => {
+    let updatedProductOrderCount = orderProducts[id].count;
+
+    updatedProductOrderCount += 1;
+
+    setOrderProducts((prevState) => ({
+      ...prevState,
+      [id]: { count: updatedProductOrderCount, product: products[id - 1] },
+    }));
+  };
 
   const handleButtonClick = (index) => {
     setActivatedButton(index);
@@ -114,12 +271,42 @@ const SwipeableTemporaryDrawer = () => {
     setState({ ...state, [anchor]: open });
   };
 
+  const addToOrders = () => {
+    const updatedOrders = Object.values(orderProducts).filter((order) => {
+      return {
+        productName: order.product.productName,
+        price: order.product.price,
+        count: order.count,
+      };
+    });
+
+    console.log("updatedOrders", updatedOrders);
+    console.log("currentTime", currentTime);
+
+    const newOrder = {
+      id: orders.length + 1,
+      ...newUserInfo,
+      time: currentTime,
+      productsPrice: totalSum,
+      delivery: false,
+      totalSum: totalSum,
+      operator: "Shaoxrux M",
+      flial: "Fast Food Maksim Gorkiy",
+      status: "new",
+      orders: [...updatedOrders],
+    };
+
+    setOrders((prevState) => [...prevState, newOrder]);
+    // console.log(orderProducts);
+
+    console.log(orders);
+  };
+
   const list = (anchor) => (
     <Box
-      sx={{ padding: "40px", width: "1100px" }}
+      sx={{ paddingX: "40px", paddingY: "20px", width: "1030px" }}
       role="presentation"
       //   onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
     >
       <Box
         sx={{
@@ -137,7 +324,7 @@ const SwipeableTemporaryDrawer = () => {
           }}
         >
           <Typography sx={{ px: "8px", mb: "20px", fontWeight: "bold" }}>
-            Yangi buyurtma qo’shish
+            Yangi buyurtma qo'shish
           </Typography>
           <Box
             sx={{
@@ -179,9 +366,205 @@ const SwipeableTemporaryDrawer = () => {
               );
             })}
           </Box>
-          <ShowProducts categoryId={filterIndex}></ShowProducts>
+          <ShowProducts
+            orderProducts={orderProducts}
+            collectAddButtonIds={collectAddButtonIds}
+            decrementProduct={decrementProduct}
+            incrementProduct={incrementProduct}
+            categoryId={filterIndex}
+          ></ShowProducts>
         </Box>
-        <Box sx={{ flex: 3 }}>Orders Data</Box>
+
+        <Box sx={{ flex: 3 }}>
+          {Object.keys(orderProducts).length > 0 ? (
+            <>
+              {" "}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography>Buyurtma ro’yxati</Typography>
+                <Button
+                  sx={{
+                    minWidth: "35px",
+                    minHeight: "35px",
+                    borderRadius: "50%",
+                    backgroundColor: "#EDEFF3",
+                    color: "black",
+                    p: 0,
+                  }}
+                >
+                  <BiTrash style={{ fontSize: "19px" }} />
+                </Button>
+              </Box>
+              <Box
+                sx={{
+                  mt: 3,
+                  border: "1px solid #EDEFF3",
+                  borderRadius: "5px",
+                  padding: "15px 12px",
+                }}
+              >
+                {Object.values(orderProducts).map((order, orderIndex) => {
+                  totalSum += order.count * order.product.price;
+
+                  return (
+                    <Box
+                      key={orderIndex}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginY: "8px",
+                      }}
+                    >
+                      <Typography>{order.product.productName}</Typography>
+                      <Typography>{`${order.count}*${order.product.price}`}</Typography>
+                    </Box>
+                  );
+                })}
+
+                <Box
+                  sx={{
+                    backgroundColor: "#EDEFF3",
+                    borderRadius: "5px",
+                    padding: "7px 15px",
+                    mt: 7,
+                  }}
+                >
+                  <Typography sx={{ fontSize: "13px", color: "#8D9BA8" }}>
+                    Umumiy summa
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: "20px",
+                        fontWeight: "bold",
+                        marginRight: "10px",
+                      }}
+                    >
+                      {totalSum.toLocaleString()}
+                    </Typography>
+                    <Typography>UZS</Typography>
+                  </Box>
+                </Box>
+              </Box>
+              <Box
+                component="form"
+                sx={{
+                  my: 3,
+                  "& .MuiFormControl-root": { width: "100%" },
+                  "& #outlined-basic": { paddingY: "8px" },
+                  "& .MuiInputBase-root": {
+                    my: 1,
+                  },
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <TextField
+                  id="outlined-basic"
+                  label="Mijoz ismi"
+                  variant="outlined"
+                  name="name"
+                  type="text"
+                  sx={{
+                    width: "100%",
+                    "& #outlined-basic-label": {
+                      top: "0px",
+                      "&.MuiInputLabel-shrink": {
+                        top: "8px",
+                      },
+                    },
+                  }}
+                  onChange={(e) => {
+                    takeUserInfoOnChange(e.target.name, e.target.value);
+                  }}
+                />
+
+                <TextField
+                  id="outlined-basic"
+                  label="Telefon raqam"
+                  variant="outlined"
+                  name="phone"
+                  type="tel"
+                  sx={{
+                    width: "100%",
+                    "& #outlined-basic-label": {
+                      top: "0px",
+                      "&.MuiInputLabel-shrink": {
+                        top: "8px",
+                      },
+                    },
+                  }}
+                  onChange={(e) => {
+                    takeUserInfoOnChange(e.target.name, e.target.value);
+                  }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label="Manzil"
+                  variant="outlined"
+                  name="address"
+                  type="address"
+                  sx={{
+                    width: "100%",
+                    "& #outlined-basic-label": {
+                      top: "0px",
+                      "&.MuiInputLabel-shrink": {
+                        top: "8px",
+                      },
+                    },
+                  }}
+                  onChange={(e) => {
+                    takeUserInfoOnChange(e.target.name, e.target.value);
+                  }}
+                />
+              </Box>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.190116400739!2d69.22590977572126!3d41.326479099771404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8bb7a0ebbae3%3A0xf9e01b5d45fc68cd!2sPDP%20Academy!5e0!3m2!1sen!2s!4v1692354559788!5m2!1sen!2s"
+                style={{
+                  border: 0,
+                  borderRadius: "5px",
+                  height: "150px",
+                  width: "100%",
+                }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Google maps here"
+              ></iframe>
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  onClick={() => {
+                    addToOrders();
+                  }}
+                  sx={{
+                    backgroundColor: "#20D472",
+                    textTransform: "capitalize",
+                    px: 3,
+                    color: "#fff",
+                    "&:hover": {
+                      backgroundColor: "#21B665",
+                    },
+                  }}
+                >
+                  Saqlash
+                </Button>
+              </Box>
+            </>
+          ) : null}
+        </Box>
       </Box>
     </Box>
   );
@@ -189,24 +572,45 @@ const SwipeableTemporaryDrawer = () => {
   return (
     <div>
       <React.Fragment key={"right"}>
-        <Button
+        <Box
+          onClick={toggleDrawer("right", true)}
           sx={{
-            p: 0,
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            color: "white",
-            minWidth: "auto",
-            backgroundColor: "rgba(32, 212, 114, 1)",
-            boxShadow: "none",
-            "&:hover": {
-              backgroundColor: "rgb(27, 172, 93)",
+            display: "flex",
+            alignItems: "center",
+            gap: "20px",
+            cursor: "pointer",
+            "&:hover p": {
+              opacity: "0.7",
             },
           }}
-          onClick={toggleDrawer("right", true)}
         >
-          <AddIcon></AddIcon>
-        </Button>
+          <Button
+            sx={{
+              p: 0,
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              color: "white",
+              minWidth: "auto",
+              backgroundColor: "rgba(32, 212, 114, 1)",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: "rgb(27, 172, 93)",
+              },
+            }}
+          >
+            <AddIcon></AddIcon>
+          </Button>
+          <Typography
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+            }}
+          >
+            {" "}
+            Yangi buyurtma <br /> qo’shish
+          </Typography>
+        </Box>
         <SwipeableDrawer
           anchor={"right"}
           open={state["right"]}
