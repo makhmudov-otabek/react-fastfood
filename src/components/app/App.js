@@ -33,10 +33,6 @@ function App() {
     defaultValue: false,
   });
 
-  console.log("0");
-  console.log("1");
-  console.log("3");
-
   const navigate = useNavigate();
   const location = useLocation();
 
