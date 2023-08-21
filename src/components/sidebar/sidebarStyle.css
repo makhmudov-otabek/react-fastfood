@@ -1,8 +1,24 @@
 .buttonFocused {
   background-color: rgba(252, 182, 0, 0.9) !important;
   color: white !important;
+  border-radius: 5px;
 }
 .buttonUnFocused {
   background-color: white !important;
   color: black !important;
+}
+
+.orderButtonFocusedIcon {
+  color: #f6f6f6;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+}
+
+.orderButtonUnFocusedIcon {
+  text-align: center !important;
+  border-radius: 5px !important;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
 }

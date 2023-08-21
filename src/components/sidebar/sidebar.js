@@ -1,11 +1,25 @@
 import "./sidebarStyle.css";
-
+import * as React from "react";
 import { Box } from "@mui/system";
 
 import avatar from "./imgs/Bitmap.png";
 import { Typography } from "@mui/material";
 
-import * as React from "react";
+import checkIcon from "./icons/check-circle.svg";
+import boxIcon from "./icons/archive.svg";
+import usersIcon from "./icons/users.svg";
+import statisticIcon from "./icons/bar-chart-2.svg";
+import locationIcon from "./icons/map-pin.svg";
+import settingsIcon from "./icons/settings.svg";
+import layersIcon from "./icons/layers.svg";
+
+import { FiCheckCircle } from "react-icons/fi";
+import { BsArchive } from "react-icons/bs";
+import { BiLayer } from "react-icons/bi";
+import { CiLocationOn } from "react-icons/ci";
+import { FiUsers } from "react-icons/fi";
+import { FiBarChart2 } from "react-icons/fi";
+import { FiSettings } from "react-icons/fi";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
@@ -19,15 +33,23 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import { useState } from "react";
-
+import LayersIcon from "@mui/icons-material/Layers";
 import { useNavigate } from "react-router-dom";
+import { useLocalStorageState } from "ahooks";
+
+import { grey } from "@mui/material/colors";
+
+const whiteColor = grey[50];
 
 const drawerWidth = "20%";
 
 const PermanentDrawerLeft = () => {
   const navigate = useNavigate();
 
-  const [activatedButton, setActivatedButton] = useState(1);
+  const [activatedButton, setActivatedButton] = useLocalStorageState(
+    "activeSection",
+    { defaultValue: 1 }
+  );
 
   const handleButtonClick = (index) => {
     setActivatedButton(index);
@@ -66,8 +88,9 @@ const PermanentDrawerLeft = () => {
           <Box>
             <Typography sx={{ fontWeight: "bold" }}>Fast Food</Typography>
             <Typography
+              className="text-sky-400"
               sx={{
-                color: "rgba(45, 58, 69, 0.7)",
+                // color: "rgba(45, 58, 69, 0.7)",
                 fontSize: "11px",
                 fontWeight: "bold",
               }}
@@ -97,19 +120,36 @@ const PermanentDrawerLeft = () => {
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Orders"} />
+              <FiCheckCircle
+                className={
+                  activatedButton === 1
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></FiCheckCircle>
+
+              <ListItemText primary={"Buyurtmalar"} />
             </ListItemButton>
           </ListItem>
           <ListItem
@@ -121,31 +161,47 @@ const PermanentDrawerLeft = () => {
               handleButtonClick(2);
               navigate("/products");
             }}
+            className={
+              activatedButton === 2 ? "buttonFocused" : "buttonUnFocused"
+            }
           >
             <ListItemButton
-              className={
-                activatedButton === 2 ? "buttonFocused" : "buttonUnFocused"
-              }
               sx={{
                 borderLeft: "5px solid rgba(252, 182, 0, 1)",
                 paddingTop: "10px",
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
-
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Maxsulotlar"} />
+              <BsArchive
+                className={
+                  activatedButton === 2
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></BsArchive>
+              <ListItemText primary={"Mahsulotlar"} />
             </ListItemButton>
           </ListItem>
           <ListItem
@@ -157,29 +213,46 @@ const PermanentDrawerLeft = () => {
               handleButtonClick(3);
               navigate("/categories");
             }}
+            className={
+              activatedButton === 3 ? "buttonFocused" : "buttonUnFocused"
+            }
           >
             <ListItemButton
-              className={
-                activatedButton === 3 ? "buttonFocused" : "buttonUnFocused"
-              }
               sx={{
                 borderLeft: "5px solid rgba(252, 182, 0, 1)",
                 paddingTop: "10px",
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
+              <BiLayer
+                className={
+                  activatedButton === 3
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></BiLayer>
               <ListItemText primary={"Kategoriyalar"} />
             </ListItemButton>
           </ListItem>
@@ -203,18 +276,34 @@ const PermanentDrawerLeft = () => {
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
+              <CiLocationOn
+                className={
+                  activatedButton === 4
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></CiLocationOn>
               <ListItemText primary={"Fliallar"} />
             </ListItemButton>
           </ListItem>
@@ -238,19 +327,34 @@ const PermanentDrawerLeft = () => {
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
-
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
+              <FiUsers
+                className={
+                  activatedButton === 5
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></FiUsers>
               <ListItemText primary={"Mijozlar"} />
             </ListItemButton>
           </ListItem>
@@ -274,21 +378,38 @@ const PermanentDrawerLeft = () => {
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
+              <FiBarChart2
+                className={
+                  activatedButton === 6
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></FiBarChart2>
               <ListItemText primary={"Xisobot"} />
             </ListItemButton>
           </ListItem>
+
           <ListItem
             disablePadding
             sx={{
@@ -296,66 +417,47 @@ const PermanentDrawerLeft = () => {
             }}
             onClick={() => {
               handleButtonClick(7);
-              navigate("/employees");
-            }}
-          >
-            <ListItemButton
-              className={
-                activatedButton === 7 ? "buttonFocused" : "buttonUnFocused"
-              }
-              sx={{
-                borderLeft: "5px solid rgba(252, 182, 0, 1)",
-                paddingTop: "10px",
-                paddingBottom: "10px",
-                borderTopRightRadius: "5px",
-                borderBottomRightRadius: "5px",
-                "&:hover": {
-                  backgroundColor: "rgba(252, 182, 0, 0.9)",
-                  color: "white",
-                },
-                "& .css-cveggr-MuiListItemIcon-root": {
-                  minWidth: "35px",
-                },
-              }}
-            >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Hodimlar"} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            disablePadding
-            sx={{
-              width: "85%",
-            }}
-            onClick={() => {
-              handleButtonClick(8);
               navigate("/catalog");
             }}
+            className={
+              activatedButton === 7 ? "buttonFocused" : "buttonUnFocused"
+            }
           >
             <ListItemButton
-              className={
-                activatedButton === 8 ? "buttonFocused" : "buttonUnFocused"
-              }
               sx={{
                 borderLeft: "5px solid rgba(252, 182, 0, 1)",
                 paddingTop: "10px",
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
                 "&:hover": {
                   backgroundColor: "rgba(252, 182, 0, 0.9)",
                   color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
                 },
                 "& .css-cveggr-MuiListItemIcon-root": {
                   minWidth: "35px",
                 },
               }}
             >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
+              <FiSettings
+                className={
+                  activatedButton === 7
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></FiSettings>
               <ListItemText primary={"Katalog"} />
             </ListItemButton>
           </ListItem>

@@ -198,7 +198,8 @@ const SwipeableTemporaryDrawer = () => {
   const [newUserInfo, setNewUserInfo] = useState({
     name: "",
     phone: "",
-    address: "",
+    address:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.190116400739!2d69.22590977572126!3d41.326479099771404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8bb7a0ebbae3%3A0xf9e01b5d45fc68cd!2sPDP%20Academy!5e0!3m2!1sen!2s!4v1692376026597!5m2!1sen!2s",
   });
 
   let totalSum = 0;
@@ -280,9 +281,6 @@ const SwipeableTemporaryDrawer = () => {
       };
     });
 
-    console.log("updatedOrders", updatedOrders);
-    console.log("currentTime", currentTime);
-
     const newOrder = {
       id: orders.length + 1,
       ...newUserInfo,
@@ -297,9 +295,6 @@ const SwipeableTemporaryDrawer = () => {
     };
 
     setOrders((prevState) => [...prevState, newOrder]);
-    // console.log(orderProducts);
-
-    console.log(orders);
   };
 
   const list = (anchor) => (
@@ -532,7 +527,7 @@ const SwipeableTemporaryDrawer = () => {
                 />
               </Box>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.190116400739!2d69.22590977572126!3d41.326479099771404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8bb7a0ebbae3%3A0xf9e01b5d45fc68cd!2sPDP%20Academy!5e0!3m2!1sen!2s!4v1692354559788!5m2!1sen!2s"
+                src={newUserInfo.address}
                 style={{
                   border: 0,
                   borderRadius: "5px",
@@ -543,10 +538,13 @@ const SwipeableTemporaryDrawer = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Google maps here"
-              ></iframe>
+              >
+                Manzil topilmadi
+              </iframe>
               <Box sx={{ mt: 2 }}>
                 <Button
                   onClick={() => {
+                    toggleDrawer("right", false)();
                     addToOrders();
                   }}
                   sx={{
@@ -608,7 +606,7 @@ const SwipeableTemporaryDrawer = () => {
             }}
           >
             {" "}
-            Yangi buyurtma <br /> qo’shish
+            Yangi buyurtma <br /> qo'shish
           </Typography>
         </Box>
         <SwipeableDrawer

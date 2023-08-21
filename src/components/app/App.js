@@ -27,7 +27,12 @@ import productsData from "../../data/productsData";
 function App() {
   const [orders, setOrders] = useState([...orderesData]);
   const [categories, setCategories] = useState([...categoriesData]);
-  const [products, setProducts] = useState([...productsData]);
+
+  const reverseData = productsData.reduceRight((accumlator, element) => {
+    return [...accumlator, element];
+  }, []);
+
+  const [products, setProducts] = useState([...reverseData]);
 
   const [adminActivated, setAdminActivated] = useLocalStorageState("logged", {
     defaultValue: false,
@@ -35,8 +40,6 @@ function App() {
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  console.log("");
 
   useEffect(() => {
     if (adminActivated && location.pathname === "/login") navigate("/");
