@@ -111,7 +111,7 @@ const LoginPage = ({ setAdminActivated }) => {
             />
             <TextField
               id="outlined-basic"
-              label="Parol"
+              label="Password : 12345"
               variant="outlined"
               name="password"
               sx={{
