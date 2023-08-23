@@ -19,6 +19,12 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import { useContext } from "react";
 import { useSearchParams } from "react-router-dom";
+import { TbLayoutList } from "react-icons/tb";
+import { TbLayoutCards } from "react-icons/tb";
+import { FaBeer } from "react-icons/fa";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import horizontalIcon from "./icons/horizontal.png";
 import verticalIcon from "./icons/vertical.png";
@@ -361,6 +367,42 @@ const ShowOrders = () => {
 
   const [filterIndex, setFilterIndex] = useState(1);
 
+  const notifySuccess = () =>
+    toast("🦄 Yangi buyurtma qo'shildi!", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
+  const notifyDelete = () =>
+    toast.error("🗑️ Buyurtma o'chirildi!", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
+  const notifyWarning = () =>
+    toast.warning("Malumotlarni to'ldiring!", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
   return (
     <Box>
       {/* <SearchAppBar></SearchAppBar> */}
@@ -399,7 +441,11 @@ const ShowOrders = () => {
                   gap: "10px",
                 }}
               >
-                <SwipeableTemporaryDrawer></SwipeableTemporaryDrawer>
+                <SwipeableTemporaryDrawer
+                  notifySuccess={notifySuccess}
+                  notifyDelete={notifyDelete}
+                  notifyWarning={notifyWarning}
+                ></SwipeableTemporaryDrawer>
               </Box>
               <Box
                 sx={{
@@ -426,7 +472,7 @@ const ShowOrders = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      p: "5px 35px",
+                      p: "5px 20px",
                       borderRadius: "50px",
                       minWidth: "auto",
                       backgroundColor:
@@ -482,7 +528,7 @@ const ShowOrders = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      p: "5px 35px",
+                      p: "5px 20px",
                       borderRadius: "50px",
                       minWidth: "auto",
                       backgroundColor:
@@ -510,7 +556,7 @@ const ShowOrders = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      p: "5px 35px",
+                      p: "5px 20px",
                       borderRadius: "50px",
                       minWidth: "auto",
                       backgroundColor:
@@ -534,6 +580,34 @@ const ShowOrders = () => {
                     }}
                   >
                     Yopilgan
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      p: "5px 10px",
+                      borderRadius: "50px",
+                      minWidth: "auto",
+                      backgroundColor:
+                        activatedButton === 5 ? "white" : "transparent",
+                      color:
+                        activatedButton === 5
+                          ? "rgba(45, 58, 69, 1)"
+                          : "rgba(45, 58, 69, 0.5)",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "white",
+                      },
+                      "&:focus": {
+                        boxShadow:
+                          "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
+                      },
+                    }}
+                    onClick={() => {
+                      handleButtonClick(5);
+                      setFilterIndex(5);
+                    }}
+                  >
+                    Bekor qilingan
                   </Button>
                 </Box>
               </Box>
@@ -585,7 +659,24 @@ const ShowOrders = () => {
                       handleChangeLayout(1);
                     }}
                   >
-                    <img src={horizontalIcon} alt="" />
+                    {activeLayout === 1 ? (
+                      <TbLayoutList
+                        style={{
+                          fill: "rgb(141, 155, 168)",
+                          color: "#8D9BA8",
+                          fontSize: "20px",
+                          minWidth: "20px",
+                        }}
+                      />
+                    ) : (
+                      <TbLayoutList
+                        style={{
+                          color: "#8D9BA8",
+                          fontSize: "20px",
+                          minWidth: "20px",
+                        }}
+                      />
+                    )}
                   </Button>
                   <Button
                     variant="contained"
@@ -613,7 +704,24 @@ const ShowOrders = () => {
                       handleChangeLayout(2);
                     }}
                   >
-                    <img src={verticalIcon} alt="" />
+                    {activeLayout === 2 ? (
+                      <TbLayoutCards
+                        style={{
+                          fill: "rgb(141, 155, 168)",
+                          color: "#8D9BA8",
+                          fontSize: "20px",
+                          minWidth: "20px",
+                        }}
+                      />
+                    ) : (
+                      <TbLayoutCards
+                        style={{
+                          color: "#8D9BA8",
+                          fontSize: "20px",
+                          minWidth: "20px",
+                        }}
+                      />
+                    )}
                   </Button>
                 </Box>
               </Box>
@@ -624,6 +732,18 @@ const ShowOrders = () => {
 
       <Box sx={{ padding: "35px" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <ToastContainer
+            position="bottom-left"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           <OredersHorizontalLayout
             filterIndex={filterIndex}
           ></OredersHorizontalLayout>

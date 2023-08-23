@@ -176,7 +176,11 @@ const ShowProducts = ({
   );
 };
 
-const SwipeableTemporaryDrawer = () => {
+const SwipeableTemporaryDrawer = ({
+  notifySuccess,
+  notifyDelete,
+  notifyWarning,
+}) => {
   const [state, setState] = React.useState({
     right: false,
   });
@@ -209,9 +213,12 @@ const SwipeableTemporaryDrawer = () => {
   };
 
   const collectAddButtonIds = (id) => {
+    console.log(id);
+    console.log(products[products.length - id]);
+
     setOrderProducts((prevState) => ({
       ...prevState,
-      [id]: { count: 1, product: products[id - 1] },
+      [id]: { count: 1, product: products[products.length - id] },
     }));
   };
 
@@ -228,6 +235,7 @@ const SwipeableTemporaryDrawer = () => {
       clearInterval(intervalId);
     };
   }, []);
+
   const decrementProduct = (id) => {
     let updatedProductOrderCount = orderProducts[id].count;
 
@@ -239,7 +247,7 @@ const SwipeableTemporaryDrawer = () => {
       ...prevState,
       [id]: {
         count: updatedProductOrderCount,
-        product: products[id - 1],
+        product: products[products.length - id],
         totalSum: totalSum,
       },
     }));
@@ -252,7 +260,10 @@ const SwipeableTemporaryDrawer = () => {
 
     setOrderProducts((prevState) => ({
       ...prevState,
-      [id]: { count: updatedProductOrderCount, product: products[id - 1] },
+      [id]: {
+        count: updatedProductOrderCount,
+        product: products[products.length - id],
+      },
     }));
   };
 
@@ -273,6 +284,17 @@ const SwipeableTemporaryDrawer = () => {
   };
 
   const addToOrders = () => {
+    if (
+      newUserInfo.address.trim().length === 0 ||
+      newUserInfo.name.trim().length === 0 ||
+      newUserInfo.phone.trim().length === 0
+    ) {
+      notifyWarning();
+      return;
+    }
+
+    toggleDrawer("right", false)();
+
     const updatedOrders = Object.values(orderProducts).filter((order) => {
       return {
         productName: order.product.productName,
@@ -281,8 +303,12 @@ const SwipeableTemporaryDrawer = () => {
       };
     });
 
+    const newId = orderesData.reduce((accumlator, element) => {
+      return Math.max(accumlator, element.id);
+    }, 0);
+
     const newOrder = {
-      id: orders.length + 1,
+      id: newId + 1,
       ...newUserInfo,
       time: currentTime,
       productsPrice: totalSum,
@@ -295,6 +321,29 @@ const SwipeableTemporaryDrawer = () => {
     };
 
     setOrders((prevState) => [...prevState, newOrder]);
+
+    setNewUserInfo({
+      name: "",
+      phone: "",
+      address:
+        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.190116400739!2d69.22590977572126!3d41.326479099771404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8bb7a0ebbae3%3A0xf9e01b5d45fc68cd!2sPDP%20Academy!5e0!3m2!1sen!2s!4v1692376026597!5m2!1sen!2s",
+    });
+
+    setOrderProducts({});
+
+    notifySuccess();
+  };
+
+  const canselOrder = () => {
+    setOrderProducts({});
+    setNewUserInfo({
+      name: "",
+      phone: "",
+      address:
+        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.190116400739!2d69.22590977572126!3d41.326479099771404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8bb7a0ebbae3%3A0xf9e01b5d45fc68cd!2sPDP%20Academy!5e0!3m2!1sen!2s!4v1692376026597!5m2!1sen!2s",
+    });
+
+    notifyDelete();
   };
 
   const list = (anchor) => (
@@ -306,28 +355,33 @@ const SwipeableTemporaryDrawer = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "start",
+          // justifyContent: "space-between",
+          // alignItems: "start",
           gap: "20px",
         }}
       >
         <Box
           sx={{
             backgroundColor: "white",
-            flex: 1,
+            width: "62%",
             py: "11px",
           }}
         >
-          <Typography sx={{ px: "8px", mb: "20px", fontWeight: "bold" }}>
+          <Typography
+            sx={{ px: "8px", mb: "20px", fontWeight: "bold" }}
+            onClick={() => {
+              console.log(newUserInfo);
+            }}
+          >
             Yangi buyurtma qo'shish
           </Typography>
           <Box
             sx={{
               px: "8px",
               py: "8px",
+              width: "590px",
+              overflowX: "auto",
               display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
               gap: "7px",
               backgroundColor: "rgba(237, 239, 243, 1)",
               borderRadius: "50px",
@@ -363,6 +417,7 @@ const SwipeableTemporaryDrawer = () => {
           </Box>
           <ShowProducts
             orderProducts={orderProducts}
+            setOrderProducts={setOrderProducts}
             collectAddButtonIds={collectAddButtonIds}
             decrementProduct={decrementProduct}
             incrementProduct={incrementProduct}
@@ -370,7 +425,7 @@ const SwipeableTemporaryDrawer = () => {
           ></ShowProducts>
         </Box>
 
-        <Box sx={{ flex: 3 }}>
+        <Box sx={{ width: "35%" }}>
           {Object.keys(orderProducts).length > 0 ? (
             <>
               {" "}
@@ -390,6 +445,10 @@ const SwipeableTemporaryDrawer = () => {
                     backgroundColor: "#EDEFF3",
                     color: "black",
                     p: 0,
+                  }}
+                  onClick={() => {
+                    toggleDrawer("right", false)();
+                    canselOrder();
                   }}
                 >
                   <BiTrash style={{ fontSize: "19px" }} />
@@ -471,8 +530,10 @@ const SwipeableTemporaryDrawer = () => {
                   id="outlined-basic"
                   label="Mijoz ismi"
                   variant="outlined"
+                  value={newUserInfo.name}
                   name="name"
                   type="text"
+                  required
                   sx={{
                     width: "100%",
                     "& #outlined-basic-label": {
@@ -491,8 +552,10 @@ const SwipeableTemporaryDrawer = () => {
                   id="outlined-basic"
                   label="Telefon raqam"
                   variant="outlined"
+                  value={newUserInfo.phone}
                   name="phone"
                   type="tel"
+                  required
                   sx={{
                     width: "100%",
                     "& #outlined-basic-label": {
@@ -512,6 +575,7 @@ const SwipeableTemporaryDrawer = () => {
                   variant="outlined"
                   name="address"
                   type="address"
+                  required
                   sx={{
                     width: "100%",
                     "& #outlined-basic-label": {
@@ -544,7 +608,6 @@ const SwipeableTemporaryDrawer = () => {
               <Box sx={{ mt: 2 }}>
                 <Button
                   onClick={() => {
-                    toggleDrawer("right", false)();
                     addToOrders();
                   }}
                   sx={{

@@ -3,87 +3,18 @@ import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { Fragment } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { useCallback } from "react";
-
 import { useContext, useState } from "react";
 import ApiContext from "../../../context/context";
-import { InputLabel, Typography } from "@mui/material";
-import { BiTrash } from "react-icons/bi";
-
-import { useEffect } from "react";
-import { borderRadius } from "@mui/system";
-
-import { useDropzone } from "react-dropzone";
-
-const ShowProducts = () => {
-  return (
-    <Box sx={{ flexGrow: 1, px: "10px" }}>
-      <Grid
-        container
-        spacing={3}
-        sx={{
-          py: "30px",
-        }}
-      >
-        1
-      </Grid>
-    </Box>
-  );
-};
-
-function ImageUpload() {
-  const onDrop = useCallback((acceptedFiles) => {
-    // acceptedFiles ichidagi faylni olish va kerakli amallarni bajarish
-    const file = acceptedFiles[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageDataURL = e.target.result;
-        // Rasmni foydalanuvchiga ko'rsatish yoki yuklash uchun ishlatish
-        console.log("Rasm ma'lumotlari:", imageDataURL);
-      };
-      reader.readAsDataURL(file);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: "image/*", // faqat rasm fayllarni qabul qilish
-  });
-
-  return (
-    <div>
-      <div {...getRootProps()} style={dropzoneStyles}>
-        <input {...getInputProps()} />
-        <p>Rasmni tanlash yoki bu yerga yuklang</p>
-      </div>
-    </div>
-  );
-}
-
-const dropzoneStyles = {
-  border: "2px dashed #cccccc",
-  borderRadius: "4px",
-  padding: "20px",
-  textAlign: "center",
-  cursor: "pointer",
-};
+import { Typography } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
 
 const AddProductModal = () => {
   const [state, setState] = React.useState({
     right: false,
   });
 
-  const { products, setProducts } = useContext(ApiContext);
-
-  const [age, setAge] = React.useState("");
+  const { products, setProducts, categories } = useContext(ApiContext);
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -98,13 +29,36 @@ const AddProductModal = () => {
   };
 
   const [newProduct, setNewProduct] = useState({
-    categoryId: 0,
+    categoryId: 1,
     id: 0,
     productName: "",
     price: 0,
     extra: "",
     productImage: null,
   });
+
+  const feedbackSuccess = () =>
+    toast.success("Maxsulot muvaffaqiyatli qo'shildi!", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  const feedbackError = () =>
+    toast.error("Iltimos malumotlarni to'ldiring!", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
 
   const updateNewProductInfo = (name, value) => {
     setNewProduct((prev) => ({ ...prev, [name]: value }));
@@ -125,11 +79,36 @@ const AddProductModal = () => {
   };
 
   const submitNewProduct = () => {
-    const length = products.length + 1;
+    if (
+      newProduct.extra.trim() === "" ||
+      newProduct.price.trim() === "" ||
+      newProduct.productName.trim() === "" ||
+      newProduct.productImage === null
+    ) {
+      feedbackError();
+      return;
+    }
 
-    setNewProduct((prev) => ({ ...prev, id: length }));
+    const newId = products.reduce((accumlator, element) => {
+      return Math.max(accumlator, element.id);
+    }, 0);
+
+    setNewProduct((prev) => ({ ...prev, id: newId + 1 }));
 
     setProducts((prev) => [...prev, newProduct]);
+
+    toggleDrawer("right", false)();
+
+    feedbackSuccess();
+
+    setNewProduct({
+      categoryId: 1,
+      id: 0,
+      productName: "",
+      price: 0,
+      extra: "",
+      productImage: null,
+    });
   };
 
   const list = (anchor) => (
@@ -155,13 +134,19 @@ const AddProductModal = () => {
             width: "100%",
           }}
         >
+          <label style={{ color: "#999" }} htmlFor="productName">
+            Maxsulot nomi
+          </label>
+
           <TextField
             placeholder="Maxsulot nomi"
             type="text"
             name="productName"
+            id="productName"
+            value={newProduct.productName}
             sx={{
               width: "100%",
-              my: 1,
+              mb: "15px",
               "& .MuiOutlinedInput-input ": {
                 paddingX: 2,
                 paddingY: "7px",
@@ -172,7 +157,57 @@ const AddProductModal = () => {
             }}
           />
 
+          <label style={{ color: "#999" }} htmlFor="price">
+            Price
+          </label>
+
+          <TextField
+            placeholder="Narxi"
+            id="price"
+            type="text"
+            name="price"
+            value={newProduct.price}
+            sx={{
+              width: "100%",
+              mb: "15px",
+              "& .MuiOutlinedInput-input ": {
+                paddingX: 2,
+                paddingY: "7px",
+              },
+            }}
+            onChange={(e) => {
+              updateNewProductInfo(e.target.name, e.target.value);
+            }}
+          />
+
+          <label style={{ color: "#999" }} htmlFor="extra">
+            Extra
+          </label>
+          <TextField
+            id="extra"
+            placeholder="Extra"
+            type="text"
+            name="extra"
+            value={newProduct.extra}
+            sx={{
+              width: "100%",
+              mb: "15px",
+              "& .MuiOutlinedInput-input ": {
+                paddingX: 2,
+                paddingY: "7px",
+              },
+            }}
+            onChange={(e) => {
+              updateNewProductInfo(e.target.name, e.target.value);
+            }}
+          />
+
+          <label style={{ color: "#999" }} htmlFor="categories">
+            Kategoriya
+          </label>
+
           <select
+            id="categories"
             style={{
               width: "100%",
               padding: "8px 16px",
@@ -181,95 +216,19 @@ const AddProductModal = () => {
               borderRadius: "5px",
             }}
           >
-            <option>Kategoriga nomi</option>
-            <option
-              name="categoryId"
-              value="1"
-              onClick={(e) => {
-                selectCategory(e.target.value);
-              }}
-            >
-              Burger
-            </option>
-            <option
-              name="categoryId"
-              value="2"
-              onClick={(e) => {
-                selectCategory(e.target.value);
-              }}
-            >
-              Lavash
-            </option>
-            <option
-              name="categoryId"
-              value="3"
-              onClick={(e) => {
-                selectCategory(e.target.value);
-              }}
-            >
-              Garniyer
-            </option>
-            <option
-              name="categoryId"
-              value="4"
-              onClick={(e) => {
-                selectCategory(e.target.value);
-              }}
-            >
-              Salatlar
-            </option>
-            <option
-              name="categoryId"
-              value="5"
-              onClick={(e) => {
-                selectCategory(e.target.value);
-              }}
-            >
-              Sendvich
-            </option>
-            <option
-              name="categoryId"
-              value="6"
-              onClick={(e) => {
-                selectCategory(e.target.value);
-              }}
-            >
-              Sous
-            </option>
+            {categories.map((category) => (
+              <option
+                key={category.id}
+                name="categoryId"
+                value={category.id}
+                onClick={(e) => {
+                  selectCategory(e.target.value);
+                }}
+              >
+                {category.categoryName}
+              </option>
+            ))}
           </select>
-
-          <TextField
-            placeholder="Narxi"
-            type="text"
-            name="price"
-            sx={{
-              width: "100%",
-              my: 1,
-              "& .MuiOutlinedInput-input ": {
-                paddingX: 2,
-                paddingY: "7px",
-              },
-            }}
-            onChange={(e) => {
-              updateNewProductInfo(e.target.name, e.target.value);
-            }}
-          />
-          <TextField
-            placeholder="Extra"
-            type="text"
-            name="extra"
-            sx={{
-              width: "100%",
-              my: 1,
-              "& .MuiOutlinedInput-input ": {
-                paddingX: 2,
-                paddingY: "7px",
-              },
-            }}
-            onChange={(e) => {
-              updateNewProductInfo(e.target.name, e.target.value);
-            }}
-          />
 
           {newProduct.productImage !== null ? (
             <img
@@ -279,11 +238,18 @@ const AddProductModal = () => {
             />
           ) : null}
 
-          <Box sx={{ margin: "10px 0" }}>
+          <Box sx={{ mt: "20px" }}>
             <input
               type="file"
-              accept="image/*" // Rasm fayllarni qabul qilish
+              accept="image/*"
               onChange={handleImageUpload}
+              style={{
+                width: "100%",
+                border: "1px dashed #ccc",
+                display: "inline-block",
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
             />
           </Box>
         </Box>
@@ -293,7 +259,6 @@ const AddProductModal = () => {
             submitNewProduct();
           }}
           sx={{
-            ml: "auto",
             backgroundColor: "#20D472",
             textTransform: "capitalize",
             px: 3,
@@ -359,6 +324,7 @@ const AddProductModal = () => {
         >
           {list("right")}
         </SwipeableDrawer>
+        <ToastContainer />
       </React.Fragment>
     </div>
   );

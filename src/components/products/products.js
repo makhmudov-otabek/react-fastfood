@@ -1,16 +1,8 @@
 import * as React from "react";
-import {
-  AppBar,
-  Avatar,
-  Button,
-  TextField,
-  Typography,
-  appBarClasses,
-} from "@mui/material";
+import { AppBar, Avatar, Button, TextField, Typography } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Box } from "@mui/system";
 import AddProductModal from "./productModal/productModal";
-import SearchIcon from "@mui/icons-material/Search";
 import { CiSearch } from "react-icons/ci";
 import ApiContext from "../../context/context";
 import { useContext, useState } from "react";
@@ -18,22 +10,16 @@ import { useEffect } from "react";
 import { RxPencil1 } from "react-icons/rx";
 import { BiTrash } from "react-icons/bi";
 
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import { Fragment } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import { ToastContainer, toast } from "react-toastify";
 
-const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
+const EditProductsModal = ({
+  slicedData,
+  setSliceNumber,
+  sliceNumber,
+  searchValue,
+}) => {
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -41,15 +27,69 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
     right: false,
   });
 
+  const feedbackWarning = () =>
+    toast.warning("Mahsulot o'chirildi", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
+  const feedbackSuccess = () =>
+    toast.success("Mahsulot o'chirildi", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
   const { categories, products, setProducts } = useContext(ApiContext);
 
   const [resultData, setResultData] = useState(slicedData);
 
-  const toggleDrawer = (anchor, open, id) => (event) => {
+  const [activeEditingProductId, setActiveEditingProductId] = useState(1);
+
+  const [activeProduct, setActiveProduct] = useState(
+    products[activeEditingProductId - 1]
+  );
+
+  const toggleDrawer = (anchor, open) => (event) => {
     setState({ ...state, [anchor]: open });
   };
 
-  const list = (product) => {
+  const updatedActiveEditingProductId = (id) => {
+    console.log(id);
+    setActiveEditingProductId(id);
+    setActiveProduct(products[id - 1]);
+  };
+
+  const updateProductData = (e) => {
+    setActiveProduct((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const submitEditedProduct = () => {
+    const updatedProducts = products;
+
+    updatedProducts[activeEditingProductId - 1] = activeProduct;
+
+    setProducts(updatedProducts);
+
+    toggleDrawer("right", false)();
+
+    setResultData(updatedProducts.slice(0, sliceNumber));
+
+    feedbackSuccess();
+  };
+
+  const list = () => {
     return (
       <Box
         sx={{ paddingX: "20px", paddingY: "40px", width: "410px" }}
@@ -86,7 +126,7 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
               label="Maxsulot nomi"
               variant="outlined"
               name="productName"
-              defaultValue={product.productName}
+              value={activeProduct.productName}
               type="text"
               sx={{
                 width: "100%",
@@ -97,15 +137,17 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
                   },
                 },
               }}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                updateProductData(e);
+              }}
             />
 
             <TextField
               id="outlined-basic"
               label="Kategoriya"
-              defaultValue={categories[product.categoryId - 1].categoryName}
+              value={categories[activeProduct.categoryId - 1].categoryName}
               variant="outlined"
-              name={categories[product.categoryId - 1].categoryName}
+              name={categories[activeProduct.categoryId - 1].categoryName}
               type="text"
               sx={{
                 width: "100%",
@@ -116,12 +158,14 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
                   },
                 },
               }}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                updateProductData(e);
+              }}
             />
             <TextField
               id="outlined-basic"
               label="Narxi"
-              defaultValue={product.price.toLocaleString()}
+              value={activeProduct.price.toLocaleString()}
               variant="outlined"
               name="price"
               type="text"
@@ -134,12 +178,14 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
                   },
                 },
               }}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                updateProductData(e);
+              }}
             />
             <TextField
               id="outlined-basic"
               label="Qo'shimcha ma'lumot"
-              defaultValue={product.extra}
+              value={activeProduct.extra}
               variant="outlined"
               name="extra"
               type="text"
@@ -152,9 +198,28 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
                   },
                 },
               }}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                updateProductData(e);
+              }}
             />
           </Box>
+
+          <Button
+            onClick={() => {
+              submitEditedProduct();
+            }}
+            sx={{
+              backgroundColor: "#20D472",
+              textTransform: "capitalize",
+              px: 3,
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "#21B665",
+              },
+            }}
+          >
+            Saqlash
+          </Button>
         </Box>
       </Box>
     );
@@ -165,16 +230,24 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
 
     setProducts(updatedData);
 
-    console.log(updatedData);
+    feedbackWarning();
   };
-
-  useEffect(() => {
-    setResultData(products.slice(0, sliceNumber));
-  }, [products]);
 
   useEffect(() => {
     setResultData(slicedData);
   }, [slicedData]);
+
+  let isDisabled = false;
+
+  if (searchValue === "") {
+    isDisabled = false;
+  } else {
+    isDisabled = true;
+  }
+
+  if (searchValue === "" && sliceNumber >= products.length) {
+    isDisabled = true;
+  }
 
   return (
     <>
@@ -217,7 +290,10 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
                 }}
               >
                 <Button
-                  onClick={toggleDrawer("right", true, productIndex + 1)}
+                  onClick={() => {
+                    toggleDrawer("right", true)();
+                    updatedActiveEditingProductId(product.id);
+                  }}
                   sx={{
                     minWidth: "40px",
                     minHeight: "40px",
@@ -272,6 +348,7 @@ const EditProductsModal = ({ slicedData, setSliceNumber, sliceNumber }) => {
         onClick={() => {
           setSliceNumber((prev) => prev + 8);
         }}
+        disabled={isDisabled}
       >
         Yana yuklash
       </Button>
@@ -286,30 +363,13 @@ const ShowProducts = () => {
 
   const [slicedData, setSlicedData] = useState(products.slice(0, sliceNumber));
 
-  useEffect(() => setSlicedData(products.slice(0, sliceNumber)), [sliceNumber]);
-
   const [searchValue, setSearchValue] = useState("");
 
-  // const searchProduct = (e) => {
-  //   setSearchValue(e.target.value);
-  // };
-
-  // useEffect(() => {
-  //   if (searchValue.trim() !== "") {
-  //     setSliceNumber(reverseData.length);
-
-  //     const updatedData = resultData.filter((product) =>
-  //       product.productName.toLowerCase().includes(searchValue.toLowerCase())
-  //     );
-
-  //     setResultData(updatedData);
-  //   } else {
-  //     setSliceNumber(5);
-  //     setResultData(reverseData.slice(0, sliceNumber));
-  //   }
-  // }, [searchValue]);
+  useEffect(() => setSlicedData(products.slice(0, sliceNumber)), [sliceNumber]);
 
   const searchProduct = (e) => {
+    setSearchValue(e.target.value);
+
     if (e.target.value.trim() !== "") {
       const updatedData = products.filter((product) =>
         product.productName.toLowerCase().includes(e.target.value.toLowerCase())
@@ -319,8 +379,6 @@ const ShowProducts = () => {
     } else if (e.target.value.trim() === "")
       setSlicedData(products.slice(0, sliceNumber));
   };
-
-  useEffect(() => {}, [sliceNumber]);
 
   return (
     <Box>
@@ -508,10 +566,12 @@ const ShowProducts = () => {
 
       <Box sx={{ paddingX: "40px", height: "78vh" }}>
         <EditProductsModal
+          searchValue={searchValue}
           slicedData={slicedData}
           setSliceNumber={setSliceNumber}
           sliceNumber={sliceNumber}
         ></EditProductsModal>
+        <ToastContainer />
       </Box>
     </Box>
   );

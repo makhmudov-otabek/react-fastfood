@@ -2,14 +2,12 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { useLocalStorageState } from "ahooks";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import { Location } from "react-router-dom";
+
 import { orderesData } from "../../data/ordersData";
 
 import ApiContext from "../../context/context";
 import LoginPage from "../login/login";
 
-import { Typography } from "@mui/material";
 import Layout from "../layout/layout";
 import { Box } from "@mui/system";
 
@@ -23,16 +21,16 @@ import ShowEmployees from "../employees/employees";
 import ShowCatalog from "../catalog/catalog";
 import categoriesData from "../../data/categoryData";
 import productsData from "../../data/productsData";
+import rootCategoriesData from "../../data/rootCategory";
+import flialsData from "../../data/fliallar";
 
 function App() {
   const [orders, setOrders] = useState([...orderesData]);
   const [categories, setCategories] = useState([...categoriesData]);
+  const [rootCategories, setRootCategories] = useState([...rootCategoriesData]);
+  const [flials, setFlials] = useState([...flialsData]);
 
-  const reverseData = productsData.reduceRight((accumlator, element) => {
-    return [...accumlator, element];
-  }, []);
-
-  const [products, setProducts] = useState([...reverseData]);
+  const [products, setProducts] = useState([...productsData]);
 
   const [adminActivated, setAdminActivated] = useLocalStorageState("logged", {
     defaultValue: false,
@@ -54,8 +52,12 @@ function App() {
           setOrders,
           categories,
           setCategories,
+          rootCategories,
+          setRootCategories,
           products,
           setProducts,
+          flials,
+          setFlials,
         }}
       >
         <Routes>

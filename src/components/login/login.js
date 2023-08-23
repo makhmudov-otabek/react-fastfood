@@ -26,7 +26,8 @@ const LoginPage = ({ setAdminActivated }) => {
   };
 
   const submitLogin = () => {
-    if (password === "12345") setAdminActivated(true);
+    if (password === "12345" && email.slice(email.length - 5) === ".com")
+      setAdminActivated(true);
   };
 
   return (
@@ -62,7 +63,7 @@ const LoginPage = ({ setAdminActivated }) => {
           </Typography>
           <Typography sx={{ color: "#8D9BA8" }}>
             Tizimga kirish uchun, login va parol orqali autentifikatsiya
-            jarayonidan o’ting
+            jarayonidan o'ting
           </Typography>
         </Box>
         <Box sx={{ marginTop: "20px" }}>
