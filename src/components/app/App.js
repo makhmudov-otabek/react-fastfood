@@ -15,7 +15,7 @@ import ShowOrders from "../orders/orders";
 import ShowProducts from "../products/products";
 import ShowCategories from "../categories/categories";
 import ShowFlials from "../flials/flials";
-import ShowCustomers from "../customers/customer";
+import ShowCustomers from "../customers/customers";
 import ShowReports from "../reports/reports";
 import ShowEmployees from "../employees/employees";
 import ShowCatalog from "../catalog/catalog";
@@ -23,12 +23,14 @@ import categoriesData from "../../data/categoryData";
 import productsData from "../../data/productsData";
 import rootCategoriesData from "../../data/rootCategory";
 import flialsData from "../../data/fliallar";
+import { customersData } from "../../data/customersData";
 
 function App() {
   const [orders, setOrders] = useState([...orderesData]);
   const [categories, setCategories] = useState([...categoriesData]);
   const [rootCategories, setRootCategories] = useState([...rootCategoriesData]);
   const [flials, setFlials] = useState([...flialsData]);
+  const [customers, setCustomers] = useState([...customersData]);
 
   const [products, setProducts] = useState([...productsData]);
 
@@ -58,6 +60,8 @@ function App() {
           setProducts,
           flials,
           setFlials,
+          customers,
+          setCustomers,
         }}
       >
         <Routes>

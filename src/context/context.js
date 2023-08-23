@@ -11,6 +11,8 @@ const ApiContext = createContext({
   setRootCategories: (rootCategories) => {},
   flials: [],
   setFlials: (flials) => {},
+  customers: [],
+  setCustomers: (customers) => {},
 });
 
 export default ApiContext;
