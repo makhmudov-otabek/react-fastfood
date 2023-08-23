@@ -26,8 +26,7 @@ const LoginPage = ({ setAdminActivated }) => {
   };
 
   const submitLogin = () => {
-    if (password === "12345" && email.slice(email.length - 5) === ".com")
-      setAdminActivated(true);
+    if (password === "12345" && email.includes(".com")) setAdminActivated(true);
   };
 
   return (
