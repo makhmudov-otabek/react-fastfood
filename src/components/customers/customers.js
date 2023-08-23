@@ -66,8 +66,8 @@ const ShowCustomers = () => {
     setSearchValue(e.target.value);
 
     if (e.target.value.trim() !== "") {
-      const updatedData = customers.filter((flial) =>
-        flial.flialNameUz.toLowerCase().includes(e.target.value.toLowerCase())
+      const updatedData = customers.filter((customer) =>
+        customer.name.toLowerCase().includes(e.target.value.toLowerCase())
       );
 
       setSearchedData(updatedData);
