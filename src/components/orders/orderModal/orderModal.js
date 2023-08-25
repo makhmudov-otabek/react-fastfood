@@ -13,7 +13,6 @@ import TextField from "@mui/material/TextField";
 import { useContext, useState } from "react";
 import ApiContext from "../../../context/context";
 import { Typography } from "@mui/material";
-import { borderRadius } from "@mui/system";
 import { BiTrash } from "react-icons/bi";
 import { orderesData } from "../../../data/ordersData";
 
@@ -26,7 +25,6 @@ const ShowProducts = ({
   incrementProduct,
   orderProducts,
 }) => {
-  const { categories } = useContext(ApiContext);
   const { products } = useContext(ApiContext);
 
   const filteredProducts = products.filter(
@@ -197,7 +195,7 @@ const SwipeableTemporaryDrawer = ({
 
   const { categories } = useContext(ApiContext);
 
-  const { orders, setOrders } = useContext(ApiContext);
+  const { setOrders } = useContext(ApiContext);
 
   const [newUserInfo, setNewUserInfo] = useState({
     name: "",

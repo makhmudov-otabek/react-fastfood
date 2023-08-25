@@ -1,24 +1,22 @@
+import "./customerModal.css";
+
 import * as React from "react";
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import TextField from "@mui/material/TextField";
-
 import { useContext, useState } from "react";
 import ApiContext from "../../../context/context";
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 
-import { useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { borderRadius } from "@mui/system";
+import { toast } from "react-toastify";
 
 const CustomerModal = () => {
   const [state, setState] = React.useState({
     right: false,
   });
 
-  const { flials, setFlials } = useContext(ApiContext);
+  const { customers, setCustomers } = useContext(ApiContext);
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -32,27 +30,21 @@ const CustomerModal = () => {
     setState({ ...state, [anchor]: open });
   };
 
-  const [newFlial, setNewFlial] = useState({
-    id: 0,
-    flialNameUz: "",
-    flialNameRu: "",
-    workTimeStart: "",
-    workTimeEnd: "",
-    target: "",
-    flialLocation: "",
-    flialIframeLocation:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.641636856582!2d69.24590917572071!3d41.316659000379794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8b40d847941d%3A0x5765a18b352df71e!2sTashkent%20City%20Park!5e0!3m2!1sen!2s!4v1692749896965!5m2!1sen!2s",
+  const [newCustomer, setNewCustomer] = useState({
+    id: 1,
+    phone: "",
+    name: "",
+    orderCount: 0,
+    isActive: false,
   });
 
-  const [newId, setNewId] = useState(0);
-
-  const getNewCategoryInfo = (e) => {
-    setNewFlial((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const getNewCustomerInfo = (e) => {
+    setNewCustomer((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const selectCategory = (e) => {
-    console.log(e.target.value);
-    setNewFlial((prev) => ({ ...prev, rootCategoryId: e.target.value }));
+  const changeIsActive = () => {
+    setNewCustomer((prev) => ({ ...prev, isActive: !prev.isActive }));
+    console.log(newCustomer);
   };
 
   const feedbackError = () =>
@@ -79,44 +71,33 @@ const CustomerModal = () => {
       theme: "light",
     });
 
-  const addToFlials = () => {
+  const addToCustomers = () => {
     if (
-      newFlial.flialNameUz.trim().length === 0 ||
-      newFlial.flialNameRu.trim().length === 0 ||
-      newFlial.flialLocation.trim().length === 0 ||
-      newFlial.flialIframeLocation.trim().length === 0 ||
-      newFlial.workTimeStart.trim().length === 0 ||
-      newFlial.workTimeEnd.trim().length === 0 ||
-      newFlial.target.trim().length === 0 ||
-      newFlial.flialLocation.trim().length === 0 ||
-      newFlial.flialIframeLocation.trim().length === 0
+      newCustomer.name.trim().length === 0 ||
+      newCustomer.phone.trim().length === 0
     ) {
       feedbackError();
       return;
     }
 
-    const newId = flials.reduce((accumlator, element) => {
+    const newId = customers.reduce((accumlator, element) => {
       return Math.max(accumlator, element.id);
     }, 0);
 
-    const updatedNewFlial = { ...newFlial, id: newId + 1 };
+    const updatedNewCustomer = { ...newCustomer, id: newId + 1 };
 
-    setFlials((prev) => [...prev, updatedNewFlial]);
+    setCustomers((prev) => [...prev, updatedNewCustomer]);
 
     feedbackSuccess();
 
     toggleDrawer("right", false)();
 
-    setNewFlial({
-      id: 0,
-      flialNameUz: "",
-      flialNameRu: "",
-      workTimeStart: "",
-      workTimeEnd: "",
-      target: "",
-      flialLocation: "",
-      flialIframeLocation:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.641636856582!2d69.24590917572071!3d41.316659000379794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8b40d847941d%3A0x5765a18b352df71e!2sTashkent%20City%20Park!5e0!3m2!1sen!2s!4v1692749896965!5m2!1sen!2s",
+    setNewCustomer({
+      id: 1,
+      phone: "",
+      name: "",
+      orderCount: 0,
+      isActive: false,
     });
   };
 
@@ -135,31 +116,31 @@ const CustomerModal = () => {
         }}
       >
         <Typography sx={{ mb: "15px", fontWeight: "bold" }}>
-          Yangi flial qo'shish
+          Yangi mijoz qo'shish
         </Typography>
 
         <Box component="form" sx={{}} noValidate autoComplete="off">
           <label
-            htmlFor="flialNameUz"
+            htmlFor="name"
             style={{
               cursor: "pointer",
               color: "#999",
               fontSize: "15px",
             }}
           >
-            Filial nomi uz
+            Mijoz nomi uz
           </label>
           <TextField
-            id="flialNameUz"
-            name="flialNameUz"
-            value={newFlial.flialNameUz}
+            id="name"
+            name="name"
+            value={newCustomer.name}
             sx={{
               marginBottom: "15px",
               minWidth: "100%",
               boxSizing: "border-box",
-              "& #flialNameUz": { padding: "7px 12px" },
+              "& #name": { padding: "7px 12px" },
             }}
-            onChange={getNewCategoryInfo}
+            onChange={getNewCustomerInfo}
           />
 
           <label
@@ -170,139 +151,66 @@ const CustomerModal = () => {
               fontSize: "15px",
             }}
           >
-            Filial nomi ru
+            Telefon raqami
           </label>
           <TextField
-            id="flialNameRu"
-            name="flialNameRu"
-            value={newFlial.flialNameRu}
+            id="phone"
+            name="phone"
+            value={newCustomer.phone}
             sx={{
               marginBottom: "15px",
               minWidth: "100%",
               boxSizing: "border-box",
-              "& #flialNameRu": { padding: "7px 12px" },
+              "& #phone": { padding: "7px 12px" },
             }}
-            onChange={getNewCategoryInfo}
+            onChange={getNewCustomerInfo}
           />
 
           <label
-            htmlFor=""
+            htmlFor="orderCount"
             style={{
               cursor: "pointer",
               color: "#999",
               fontSize: "15px",
             }}
           >
-            Ish vaqti
+            Buyurtma soni
           </label>
 
-          <Box sx={{ marginBottom: "15px", display: "flex", gap: "15px" }}>
-            <TextField
-              name="workTimeStart"
-              type="time"
-              sx={{
-                marginTop: "7px",
-                width: "100%",
-                "& #workTimeStart": { padding: "7px 12px" },
-              }}
-              id="workTimeStart"
-              onChange={getNewCategoryInfo}
-              value={newFlial.workTimeStart}
+          <TextField
+            name="orderCount"
+            type="number"
+            sx={{
+              marginTop: "7px",
+              width: "100%",
+              "& #orderCount": { padding: "7px 12px" },
+            }}
+            id="orderCount"
+            onChange={getNewCustomerInfo}
+            value={newCustomer.workTimeStart}
+          />
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              mt: "15px",
+            }}
+          >
+            <input
+              type="checkbox"
+              className="isActiveCheckBox"
+              id="isActive"
+              name="isActive"
+              style={{ width: "18px", height: "18px", background: "yellow" }}
+              onChange={changeIsActive}
             />
-            <TextField
-              name="workTimeEnd"
-              type="time"
-              sx={{
-                marginTop: "7px",
-                width: "100%",
-                "& #workTimeEnd": { padding: "7px 12px" },
-              }}
-              id="workTimeEnd"
-              onChange={getNewCategoryInfo}
-              value={newFlial.workTimeEnd}
-            />
+            <label htmlFor="isActive" style={{ color: "rgb(153, 153, 153)" }}>
+              Blocklangan mijoz
+            </label>
           </Box>
-
-          <label
-            htmlFor="target"
-            style={{
-              cursor: "pointer",
-              color: "#999",
-              fontSize: "15px",
-            }}
-          >
-            Filial mo'ljal
-          </label>
-          <TextField
-            id="target"
-            name="target"
-            value={newFlial.target}
-            sx={{
-              marginBottom: "15px",
-              minWidth: "100%",
-              boxSizing: "border-box",
-              "& #target": { padding: "7px 12px" },
-            }}
-            onChange={getNewCategoryInfo}
-          />
-
-          <label
-            htmlFor="flialLocation"
-            style={{
-              cursor: "pointer",
-              color: "#999",
-              fontSize: "15px",
-            }}
-          >
-            Filial manzil
-          </label>
-          <TextField
-            id="flialLocation"
-            name="flialLocation"
-            value={newFlial.flialLocation}
-            sx={{
-              marginBottom: "15px",
-              minWidth: "100%",
-              boxSizing: "border-box",
-              "& #flialLocation": { padding: "7px 12px" },
-            }}
-            onChange={getNewCategoryInfo}
-          />
-
-          <label
-            htmlFor="flialIframeLocation"
-            style={{
-              cursor: "pointer",
-              color: "#999",
-              fontSize: "15px",
-            }}
-          >
-            Filial iframe manzil
-          </label>
-          <TextField
-            id="flialIframeLocation"
-            name="flialIframeLocation"
-            value={newFlial.flialIframeLocation}
-            sx={{
-              marginBottom: "15px",
-              minWidth: "100%",
-              boxSizing: "border-box",
-              "& #flialIframeLocation": { padding: "7px 12px" },
-            }}
-            onChange={getNewCategoryInfo}
-          />
         </Box>
-
-        <iframe
-          src={newFlial.flialIframeLocation}
-          title="Bu yerda lokatsiya"
-          frameBorder="0"
-          style={{
-            width: "100%",
-            height: "150px",
-            borderRadius: "5px",
-          }}
-        ></iframe>
 
         <Button
           variant="contained"
@@ -312,7 +220,7 @@ const CustomerModal = () => {
               backgroundColor: "#18A659",
             },
           }}
-          onClick={addToFlials}
+          onClick={addToCustomers}
         >
           Saqlash
         </Button>

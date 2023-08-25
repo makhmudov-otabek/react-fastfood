@@ -1,17 +1,3 @@
-// import { Typography } from "@mui/material";
-// import { Outlet } from "react-router-dom";
-
-// const ShowCustomers = () => {
-//   return (
-//     <>
-//       <Typography>Here show customer</Typography>
-//       <Outlet />
-//     </>
-//   );
-// };
-
-// export default ShowCustomers;
-
 import { Typography } from "@mui/material";
 import { AppBar, Button, TextField } from "@mui/material";
 import { Toolbar } from "@mui/material";
@@ -236,8 +222,6 @@ const ShowCustomers = () => {
     const reverse = customers.reduceRight((accumlator, element) => {
       return [...accumlator, element];
     }, []);
-
-    console.log("reverse", reverse);
 
     setSearchedData(reverse);
   }, [customers]);

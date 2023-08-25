@@ -1,0 +1,3 @@
+.isActiveCheckBox:checked {
+  background-color: #fcb600 !important;
+}

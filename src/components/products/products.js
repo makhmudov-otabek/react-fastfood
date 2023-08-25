@@ -19,6 +19,8 @@ const EditProductsModal = ({
   setSliceNumber,
   sliceNumber,
   searchValue,
+  resultData,
+  setResultData,
 }) => {
   const [state, setState] = React.useState({
     top: false,
@@ -53,8 +55,6 @@ const EditProductsModal = ({
 
   const { categories, products, setProducts } = useContext(ApiContext);
 
-  const [resultData, setResultData] = useState(slicedData);
-
   const [activeEditingProductId, setActiveEditingProductId] = useState(1);
 
   const [activeProduct, setActiveProduct] = useState(
@@ -88,6 +88,30 @@ const EditProductsModal = ({
 
     feedbackSuccess();
   };
+
+  const removeProduct = (id, index) => {
+    const updatedData = products.filter((product) => product.id !== id);
+
+    setProducts(updatedData);
+
+    feedbackWarning();
+  };
+
+  useEffect(() => {
+    setResultData(slicedData);
+  }, [slicedData]);
+
+  let isDisabled = false;
+
+  if (searchValue === "") {
+    isDisabled = false;
+  } else {
+    isDisabled = true;
+  }
+
+  if (searchValue === "" && sliceNumber >= products.length) {
+    isDisabled = true;
+  }
 
   const list = () => {
     return (
@@ -225,30 +249,6 @@ const EditProductsModal = ({
     );
   };
 
-  const removeProduct = (id, index) => {
-    const updatedData = products.filter((product) => product.id !== id);
-
-    setProducts(updatedData);
-
-    feedbackWarning();
-  };
-
-  useEffect(() => {
-    setResultData(slicedData);
-  }, [slicedData]);
-
-  let isDisabled = false;
-
-  if (searchValue === "") {
-    isDisabled = false;
-  } else {
-    isDisabled = true;
-  }
-
-  if (searchValue === "" && sliceNumber >= products.length) {
-    isDisabled = true;
-  }
-
   return (
     <>
       {resultData.map((product, productIndex) => (
@@ -363,9 +363,30 @@ const ShowProducts = () => {
 
   const [slicedData, setSlicedData] = useState(products.slice(0, sliceNumber));
 
+  const [resultData, setResultData] = useState(slicedData);
   const [searchValue, setSearchValue] = useState("");
 
-  useEffect(() => setSlicedData(products.slice(0, sliceNumber)), [sliceNumber]);
+  useEffect(() => {
+    setResultData(
+      products
+        .reduceRight((accumlator, element) => {
+          return [...accumlator, element];
+        }, [])
+        .slice(0, sliceNumber)
+    );
+  }, [products]);
+
+  useEffect(
+    () =>
+      setSlicedData(
+        products
+          .reduceRight((accumlator, element) => {
+            return [...accumlator, element];
+          }, [])
+          .slice(0, sliceNumber)
+      ),
+    [sliceNumber]
+  );
 
   const searchProduct = (e) => {
     setSearchValue(e.target.value);
@@ -570,6 +591,8 @@ const ShowProducts = () => {
           slicedData={slicedData}
           setSliceNumber={setSliceNumber}
           sliceNumber={sliceNumber}
+          resultData={resultData}
+          setResultData={setResultData}
         ></EditProductsModal>
         <ToastContainer />
       </Box>

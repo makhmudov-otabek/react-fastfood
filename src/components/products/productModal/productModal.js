@@ -81,7 +81,6 @@ const AddProductModal = () => {
   const submitNewProduct = () => {
     if (
       newProduct.extra.trim() === "" ||
-      newProduct.price.trim() === "" ||
       newProduct.productName.trim() === "" ||
       newProduct.productImage === null
     ) {
@@ -111,7 +110,7 @@ const AddProductModal = () => {
     });
   };
 
-  const list = (anchor) => (
+  const list = () => (
     <Box
       sx={{ paddingX: "20px", paddingY: "40px", width: "410px" }}
       role="presentation"

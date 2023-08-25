@@ -1,14 +1,11 @@
 import { Typography } from "@mui/material";
-import { Outlet } from "react-router-dom";
 
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import InputBase from "@mui/material/InputBase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -18,87 +15,97 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import { useContext } from "react";
-import { useSearchParams } from "react-router-dom";
 import { TbLayoutList } from "react-icons/tb";
 import { TbLayoutCards } from "react-icons/tb";
-import { FaBeer } from "react-icons/fa";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import horizontalIcon from "./icons/horizontal.png";
-import verticalIcon from "./icons/vertical.png";
 import ApiContext from "../../context/context";
 import SwipeableTemporaryDrawer from "./orderModal/orderModal";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
 const OredersHorizontalLayout = ({ filterIndex }) => {
-  const params = useSearchParams();
+  const [filterType, setFilterType] = useState("new");
 
-  // const [updatedFilterIndex, setupdatedFilterIndex] = useState(1);
+  const { orders, setOrders } = useContext(ApiContext);
 
-  let filterType =
-    filterIndex === 1
-      ? "new"
-      : filterIndex === 2
-      ? "accepted"
-      : filterIndex === 3
-      ? "delivired"
-      : filterIndex === 4
-      ? "closed"
-      : null;
-
-  const { orders } = useContext(ApiContext);
-
-  const filteredData = orders.filter((order) => {
-    return order.status === filterType;
-  });
-
-  const reverseFilteredData = filteredData.reduceRight(
-    (accumlator, currentElement) => [...accumlator, currentElement],
-    []
+  const [filteredData, setFilteredData] = useState(
+    orders.filter((order) => {
+      return order.status === filterType;
+    })
   );
+
+  const [reverseFilteredData, setReverseFilteredData] = useState([]);
+
+  useEffect(() => {
+    if (filterIndex === 1) {
+      setFilterType("new");
+    } else if (filterIndex === 2) {
+      setFilterType("accepted");
+    } else if (filterIndex === 3) {
+      setFilterType("delivered");
+    } else if (filterIndex === 4) {
+      setFilterType("closed");
+    } else if (filterIndex === 5) {
+      setFilterType("canceled");
+    }
+  }, [filterIndex]);
+
+  useEffect(() => {
+    // filterType o'zgarishi uchun filter qilishni bajarish
+    const filteredData = orders.filter((order) => {
+      return order.status === filterType;
+    });
+
+    // Yangilangan ma'lumotlarni setReverseFilteredData orqali saqlash
+    setReverseFilteredData(filteredData.reverse());
+  }, [filterType]);
+
+  const changeStatus = (id, status) => {
+    // filteredData ni yangilash uchun yangi bir massiv tuzamiz
+    const changingOrder = orders.find((order) => order.id === id);
+
+    const changingOrderIndex = orders.findIndex((order) => order.id === id);
+
+    if (changingOrder.status === "new") {
+      changingOrder.status = "accepted";
+    } else if (changingOrder.status === "accepted") {
+      changingOrder.status = "delivired";
+    } else if (changingOrder.status === "delivired") {
+      changingOrder.status = "closed";
+    } else if (changingOrder.status === "closed") {
+      changingOrder.status = "canceled";
+    }
+
+    const updatedOrders = orders;
+    updatedOrders[changingOrderIndex] = changingOrder;
+
+    setOrders(updatedOrders);
+
+    setFilteredData(
+      updatedOrders.filter((order) => {
+        return order.status === filterType;
+      })
+    );
+
+    setReverseFilteredData(filteredData);
+
+    // Yangilangan ma'lumotlarni saqlash
+  };
+
+  // const changeStatus = (id, status) => {
+  //   const changingOrder = orders.find((order) => order.id === id);
+
+  //   if (changingOrder.status === "new") {
+  //     changingOrder.status = "accepted";
+  //   } else if (changingOrder.status === "accepted") {
+  //     changingOrder.status = "delivired";
+  //   } else if (changingOrder.status === "delivired") {
+  //     changingOrder.status = "closed";
+  //   } else if (changingOrder.status === "closed") {
+  //     changingOrder.status = "canceled";
+  //   }
+  // };
 
   return reverseFilteredData.map((order) => {
     return (
@@ -327,6 +334,9 @@ const OredersHorizontalLayout = ({ filterIndex }) => {
               <ClearOutlinedIcon />
             </Button>
             <Button
+              onClick={() => {
+                changeStatus(order.id, order.status);
+              }}
               sx={{
                 width: "40px",
                 height: "40px",
@@ -362,8 +372,6 @@ const ShowOrders = () => {
   const handleChangeLayout = (index) => {
     setActiveLayout(index);
   };
-
-  // let filterIndex = 1;
 
   const [filterIndex, setFilterIndex] = useState(1);
 
@@ -551,7 +559,7 @@ const ShowOrders = () => {
                       setFilterIndex(3);
                     }}
                   >
-                    Jo’natilgan
+                    Jo'natilgan
                   </Button>
                   <Button
                     variant="contained"

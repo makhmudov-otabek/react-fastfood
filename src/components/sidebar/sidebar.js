@@ -5,14 +5,6 @@ import { Box } from "@mui/system";
 import avatar from "./imgs/Bitmap.png";
 import { Typography } from "@mui/material";
 
-import checkIcon from "./icons/check-circle.svg";
-import boxIcon from "./icons/archive.svg";
-import usersIcon from "./icons/users.svg";
-import statisticIcon from "./icons/bar-chart-2.svg";
-import locationIcon from "./icons/map-pin.svg";
-import settingsIcon from "./icons/settings.svg";
-import layersIcon from "./icons/layers.svg";
-
 import { FiCheckCircle } from "react-icons/fi";
 import { BsArchive } from "react-icons/bs";
 import { BiLayer } from "react-icons/bi";
@@ -22,24 +14,13 @@ import { FiBarChart2 } from "react-icons/fi";
 import { FiSettings } from "react-icons/fi";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import { useState } from "react";
-import LayersIcon from "@mui/icons-material/Layers";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorageState } from "ahooks";
-
-import { grey } from "@mui/material/colors";
-
-const whiteColor = grey[50];
 
 const drawerWidth = "20%";
 
@@ -378,7 +359,7 @@ const PermanentDrawerLeft = () => {
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
-                display: "flex",
+                display: "none",
                 justifyContent: "start",
                 alignItems: "center",
                 gap: "15px",
@@ -425,12 +406,13 @@ const PermanentDrawerLeft = () => {
           >
             <ListItemButton
               sx={{
+                display: "none",
                 borderLeft: "5px solid rgba(252, 182, 0, 1)",
                 paddingTop: "10px",
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
-                display: "flex",
+                display: "none",
                 justifyContent: "start",
                 alignItems: "center",
                 gap: "15px",
