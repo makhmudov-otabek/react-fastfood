@@ -310,6 +310,7 @@ const OredersHorizontalLayout = ({ filterIndex }) => {
             }}
           >
             <Button
+              disabled={true}
               sx={{
                 width: "40px",
                 height: "40px",
@@ -327,6 +328,7 @@ const OredersHorizontalLayout = ({ filterIndex }) => {
               <ClearOutlinedIcon />
             </Button>
             <Button
+              disabled={true}
               onClick={() => {
                 changeStatus(order.id, order.status);
               }}
@@ -635,6 +637,7 @@ const ShowOrders = () => {
                   }}
                 >
                   <Button
+                    disabled={true}
                     variant="contained"
                     sx={{
                       width: "30px",
@@ -680,6 +683,7 @@ const ShowOrders = () => {
                     )}
                   </Button>
                   <Button
+                    disabled={true}
                     variant="contained"
                     sx={{
                       width: "30px",

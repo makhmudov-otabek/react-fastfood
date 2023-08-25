@@ -294,20 +294,19 @@ const ShowCustomers = () => {
                   }}
                 >
                   <TextField
-                    variant="standard"
                     placeholder="Qidiruv"
                     sx={{
                       width: "100%",
-                      "& .css-1x51dt5-MuiInputBase-input-MuiInput-input": {
+
+                      "& fieldset": {
+                        display: "none",
+                      },
+
+                      "& .MuiInputBase-input": {
+                        px: 0,
                         pt: 1,
+                        pb: 0,
                       },
-                      "& .css-v4u5dn-MuiInputBase-root-MuiInput-root::before": {
-                        border: "none",
-                      },
-                      "& .css-v4u5dn-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled, .Mui-error)::before":
-                        {
-                          border: "none",
-                        },
                     }}
                     onChange={(e) => {
                       searchCustomer(e);
@@ -534,10 +533,10 @@ const ShowCustomers = () => {
 
                 <SwipeableDrawer
                   sx={{
-                    "& .css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop": {
+                    "& .MuiBackdrop-root": {
                       backgroundColor: "rgba(0, 0, 0, 0.1)",
                     },
-                    "& .css-1160xiw-MuiPaper-root-MuiDrawer-paper": {
+                    "& .MuiDrawer-paper": {
                       boxShadow: "none",
                     },
                   }}
