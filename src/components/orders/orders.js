@@ -63,33 +63,26 @@ const OredersHorizontalLayout = ({ filterIndex }) => {
 
   const changeStatus = (id, status) => {
     // filteredData ni yangilash uchun yangi bir massiv tuzamiz
-    const changingOrder = orders.find((order) => order.id === id);
-
-    const changingOrderIndex = orders.findIndex((order) => order.id === id);
-
-    if (changingOrder.status === "new") {
-      changingOrder.status = "accepted";
-    } else if (changingOrder.status === "accepted") {
-      changingOrder.status = "delivired";
-    } else if (changingOrder.status === "delivired") {
-      changingOrder.status = "closed";
-    } else if (changingOrder.status === "closed") {
-      changingOrder.status = "canceled";
-    }
-
-    const updatedOrders = orders;
-    updatedOrders[changingOrderIndex] = changingOrder;
-
-    setOrders(updatedOrders);
-
-    setFilteredData(
-      updatedOrders.filter((order) => {
-        return order.status === filterType;
-      })
-    );
-
-    setReverseFilteredData(filteredData);
-
+    // const changingOrder = orders.find((order) => order.id === id);
+    // const changingOrderIndex = orders.findIndex((order) => order.id === id);
+    // if (changingOrder.status === "new") {
+    //   changingOrder.status = "accepted";
+    // } else if (changingOrder.status === "accepted") {
+    //   changingOrder.status = "delivired";
+    // } else if (changingOrder.status === "delivired") {
+    //   changingOrder.status = "closed";
+    // } else if (changingOrder.status === "closed") {
+    //   changingOrder.status = "canceled";
+    // }
+    // const updatedOrders = orders;
+    // updatedOrders[changingOrderIndex] = changingOrder;
+    // setOrders(updatedOrders);
+    // setFilteredData(
+    //   updatedOrders.filter((order) => {
+    //     return order.status === filterType;
+    //   })
+    // );
+    // setReverseFilteredData(filteredData);
     // Yangilangan ma'lumotlarni saqlash
   };
 
