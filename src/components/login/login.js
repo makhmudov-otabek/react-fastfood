@@ -12,9 +12,6 @@ const LoginPage = ({ setAdminActivated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
   let changeLogin = (name, value) => {
     if (name === "password") {
       setPassword(value);
@@ -94,7 +91,7 @@ const LoginPage = ({ setAdminActivated }) => {
           >
             <TextField
               id="outlined-basic"
-              label="E-mail"
+              label="example@gmail.com"
               variant="outlined"
               name="email"
               sx={{
