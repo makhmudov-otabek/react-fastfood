@@ -1,30 +1,4 @@
-// import { Typography } from "@mui/material";
-// import { Outlet } from "react-router-dom";
-
-// const ShowFlials = () => {
-//   return (
-//     <>
-//       <Typography>Here show flials</Typography>
-//       <Outlet />
-//     </>
-//   );
-// };
-
-// export default ShowFlials;
-
 import { Typography } from "@mui/material";
-
-// const ShowCategories = () => {
-//   return (
-//     <>
-//       <Typography>Here show categories</Typography>
-//       <Outlet />
-//     </>
-//   );
-// };
-
-// export default ShowCategories;
-
 import { AppBar, Button, TextField } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Box } from "@mui/system";
@@ -32,12 +6,9 @@ import { CiLocationOn } from "react-icons/ci";
 import { CiSearch } from "react-icons/ci";
 import ApiContext from "../../context/context";
 import { useContext, useEffect, useState } from "react";
-
 import { RxPencil1 } from "react-icons/rx";
 import { BiTrash } from "react-icons/bi";
-
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-
 import { Fragment } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import FlialModal from "./flialsModal/flialsModal";
