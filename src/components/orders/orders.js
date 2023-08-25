@@ -35,7 +35,27 @@ const OredersHorizontalLayout = ({ filterIndex }) => {
     })
   );
 
-  const [reverseFilteredData, setReverseFilteredData] = useState([]);
+  const [reverseFilteredData, setReverseFilteredData] = useState(
+    filteredData.reduceRight((accumlator, element) => {
+      return [...accumlator, element];
+    }, [])
+  );
+
+  useEffect(() => {
+    setFilteredData(
+      orders.filter((order) => {
+        return order.status === filterType;
+      })
+    );
+  }, [orders]);
+
+  useEffect(() => {
+    setReverseFilteredData(
+      filteredData.reduceRight((accumlator, element) => {
+        return [...accumlator, element];
+      }, [])
+    );
+  }, [filteredData]);
 
   useEffect(() => {
     if (filterIndex === 1) {
@@ -436,7 +456,7 @@ const ShowOrders = () => {
               <Box
                 sx={{
                   backgroundColor: "white",
-                  flex: 1.2,
+                  flex: 1,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
