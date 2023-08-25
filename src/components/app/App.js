@@ -24,6 +24,7 @@ import productsData from "../../data/productsData";
 import rootCategoriesData from "../../data/rootCategory";
 import flialsData from "../../data/fliallar";
 import { customersData } from "../../data/customersData";
+import _Location from "../map/map";
 
 function App() {
   const [orders, setOrders] = useState([...orderesData]);
@@ -78,6 +79,7 @@ function App() {
             <Route path="/reports" element={<ShowReports />} />
             <Route path="/employees" element={<ShowEmployees />} />
             <Route path="/catalog" element={<ShowCatalog />} />
+            <Route path="/location" element={<_Location />} />
           </Route>
         </Routes>
       </ApiContext.Provider>

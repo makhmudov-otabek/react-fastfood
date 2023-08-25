@@ -12,6 +12,7 @@ import { CiLocationOn } from "react-icons/ci";
 import { FiUsers } from "react-icons/fi";
 import { FiBarChart2 } from "react-icons/fi";
 import { FiSettings } from "react-icons/fi";
+import { CiLocationArrow1 } from "react-icons/ci";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import List from "@mui/material/List";
@@ -390,7 +391,6 @@ const PermanentDrawerLeft = () => {
               <ListItemText primary={"Xisobot"} />
             </ListItemButton>
           </ListItem>
-
           <ListItem
             disablePadding
             sx={{
@@ -412,7 +412,6 @@ const PermanentDrawerLeft = () => {
                 paddingBottom: "10px",
                 borderTopRightRadius: "5px",
                 borderBottomRightRadius: "5px",
-                display: "none",
                 justifyContent: "start",
                 alignItems: "center",
                 gap: "15px",
@@ -441,6 +440,57 @@ const PermanentDrawerLeft = () => {
                 }
               ></FiSettings>
               <ListItemText primary={"Katalog"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem
+            disablePadding
+            sx={{
+              width: "85%",
+            }}
+            onClick={() => {
+              handleButtonClick(8);
+              navigate("/location");
+            }}
+            className={
+              activatedButton === 8 ? "buttonFocused" : "buttonUnFocused"
+            }
+          >
+            <ListItemButton
+              sx={{
+                borderLeft: "5px solid rgba(252, 182, 0, 1)",
+                paddingTop: "10px",
+                paddingBottom: "10px",
+                borderTopRightRadius: "5px",
+                borderBottomRightRadius: "5px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "15px",
+
+                "& .orderButtonUnFocusedIcon": {
+                  backgroundColor: "#f6f6f6;",
+                },
+                "&:hover": {
+                  backgroundColor: "rgba(252, 182, 0, 0.9)",
+                  color: "white",
+                  "& .orderButtonUnFocusedIcon": {
+                    color: "white",
+                    background: "transparent",
+                  },
+                },
+                "& .css-cveggr-MuiListItemIcon-root": {
+                  minWidth: "35px",
+                },
+              }}
+            >
+              <CiLocationArrow1
+                className={
+                  activatedButton === 8
+                    ? "orderButtonFocusedIcon"
+                    : "orderButtonUnFocusedIcon"
+                }
+              ></CiLocationArrow1>
+              <ListItemText primary={"Xarita"} />
             </ListItemButton>
           </ListItem>
         </List>
