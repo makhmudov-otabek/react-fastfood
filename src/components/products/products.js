@@ -6,12 +6,9 @@ import AddProductModal from "./productModal/productModal";
 import { CiSearch } from "react-icons/ci";
 import ApiContext from "../../context/context";
 import { useContext, useState } from "react";
-import { useEffect } from "react";
 import { RxPencil1 } from "react-icons/rx";
 import { BiTrash } from "react-icons/bi";
-
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { Fragment } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 const EditProductsModal = ({
@@ -19,8 +16,7 @@ const EditProductsModal = ({
   setSliceNumber,
   sliceNumber,
   searchValue,
-  resultData,
-  setResultData,
+  setSlicedData,
 }) => {
   const [state, setState] = React.useState({
     top: false,
@@ -55,20 +51,19 @@ const EditProductsModal = ({
 
   const { categories, products, setProducts } = useContext(ApiContext);
 
-  const [activeEditingProductId, setActiveEditingProductId] = useState(1);
+  const [activeEditingProductIndex, setActiveEditingProductIndex] = useState(0);
 
   const [activeProduct, setActiveProduct] = useState(
-    products[activeEditingProductId - 1]
+    products[activeEditingProductIndex]
   );
 
   const toggleDrawer = (anchor, open) => (event) => {
     setState({ ...state, [anchor]: open });
   };
 
-  const updatedActiveEditingProductId = (id) => {
-    console.log(id);
-    setActiveEditingProductId(id);
-    setActiveProduct(products[id - 1]);
+  const updatedActiveEditingProductId = (index) => {
+    setActiveEditingProductIndex(index);
+    setActiveProduct(products[index]);
   };
 
   const updateProductData = (e) => {
@@ -78,13 +73,11 @@ const EditProductsModal = ({
   const submitEditedProduct = () => {
     const updatedProducts = products;
 
-    updatedProducts[activeEditingProductId - 1] = activeProduct;
+    updatedProducts[activeEditingProductIndex] = activeProduct;
 
     setProducts(updatedProducts);
 
     toggleDrawer("right", false)();
-
-    setResultData(updatedProducts.slice(0, sliceNumber));
 
     feedbackSuccess();
   };
@@ -96,10 +89,6 @@ const EditProductsModal = ({
 
     feedbackWarning();
   };
-
-  useEffect(() => {
-    setResultData(slicedData);
-  }, [slicedData]);
 
   let isDisabled = false;
 
@@ -118,7 +107,6 @@ const EditProductsModal = ({
       <Box
         sx={{ paddingX: "20px", paddingY: "40px", width: "410px" }}
         role="presentation"
-        //   onClick={toggleDrawer(anchor, false)}
       >
         <Box
           sx={{
@@ -251,7 +239,7 @@ const EditProductsModal = ({
 
   return (
     <>
-      {resultData.map((product, productIndex) => (
+      {products.slice(0, sliceNumber).map((product, productIndex) => (
         <Box
           key={product.id}
           sx={{
@@ -292,7 +280,7 @@ const EditProductsModal = ({
                 <Button
                   onClick={() => {
                     toggleDrawer("right", true)();
-                    updatedActiveEditingProductId(product.id);
+                    updatedActiveEditingProductId(productIndex);
                   }}
                   sx={{
                     minWidth: "40px",
@@ -357,36 +345,13 @@ const EditProductsModal = ({
 };
 
 const ShowProducts = () => {
-  const { products } = useContext(ApiContext);
+  const { products, setProducts } = useContext(ApiContext);
 
   const [sliceNumber, setSliceNumber] = useState(5);
 
-  const [slicedData, setSlicedData] = useState(products.slice(0, sliceNumber));
+  const [originalProducts, setOriginalProducts] = useState(products);
 
-  const [resultData, setResultData] = useState(slicedData);
   const [searchValue, setSearchValue] = useState("");
-
-  useEffect(() => {
-    setResultData(
-      products
-        .reduceRight((accumlator, element) => {
-          return [...accumlator, element];
-        }, [])
-        .slice(0, sliceNumber)
-    );
-  }, [products]);
-
-  useEffect(
-    () =>
-      setSlicedData(
-        products
-          .reduceRight((accumlator, element) => {
-            return [...accumlator, element];
-          }, [])
-          .slice(0, sliceNumber)
-      ),
-    [sliceNumber]
-  );
 
   const searchProduct = (e) => {
     setSearchValue(e.target.value);
@@ -396,9 +361,11 @@ const ShowProducts = () => {
         product.productName.toLowerCase().includes(e.target.value.toLowerCase())
       );
 
-      setSlicedData(updatedData);
-    } else if (e.target.value.trim() === "")
-      setSlicedData(products.slice(0, sliceNumber));
+      setProducts(updatedData);
+    } else if (e.target.value.trim().length === 0) {
+      console.log("warning");
+      setProducts(originalProducts);
+    }
   };
 
   return (
@@ -587,11 +554,8 @@ const ShowProducts = () => {
       <Box sx={{ paddingX: "40px", height: "78vh" }}>
         <EditProductsModal
           searchValue={searchValue}
-          slicedData={slicedData}
           setSliceNumber={setSliceNumber}
           sliceNumber={sliceNumber}
-          resultData={resultData}
-          setResultData={setResultData}
         ></EditProductsModal>
         <ToastContainer />
       </Box>

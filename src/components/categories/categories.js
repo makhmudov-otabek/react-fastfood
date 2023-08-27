@@ -52,18 +52,14 @@ const ShowCategories = () => {
 
   const [activeEditingCategoryId, setActiveEditingCategoryId] = useState(1);
 
-  const reversed = categories.reduceRight((accumlator, element) => {
-    return [...accumlator, element];
-  }, []);
-
-  const [searchedData, setSearchedData] = useState(reversed);
-
   const [editCategory, setEditCategory] = useState({
     rootCategoryId: 0,
     id: 0,
     categoryName: "",
     categoryNameRu: "",
   });
+
+  const [originalCategoryData, setOriginalCategoryData] = useState(categories);
 
   const searchProduct = (e) => {
     setSearchValue(e.target.value);
@@ -75,9 +71,9 @@ const ShowCategories = () => {
           .includes(e.target.value.toLowerCase())
       );
 
-      setSearchedData(updatedData);
+      setCategories(updatedData);
     } else if (e.target.value.trim() === "") {
-      setSearchedData(categories);
+      setCategories(originalCategoryData);
     }
   };
 
@@ -88,14 +84,6 @@ const ShowCategories = () => {
   useEffect(() => {
     setEditCategory(categories[activeEditingCategoryId - 1]);
   }, [activeEditingCategoryId]);
-
-  useEffect(() => {
-    const reversed = categories.reduceRight((accumlator, element) => {
-      return [...accumlator, element];
-    }, []);
-
-    setSearchedData(reversed);
-  }, [categories]);
 
   const feedbackInfo = () =>
     toast.info("🎉Muvaffaqiyatli o'zgartirildi!", {
@@ -393,8 +381,8 @@ const ShowCategories = () => {
           <Typography>Hech qanday kategoriya yo'q __(-_-)__</Typography>
         )} */}
 
-        {searchedData.map((category) => {
-          if (searchedData.length === 0) {
+        {categories.map((category) => {
+          if (categories.length === 0) {
             return (
               <Typography>Hech qanday kategoriya yo'q __(-_-)__</Typography>
             );

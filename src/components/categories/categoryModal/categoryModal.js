@@ -3,21 +3,11 @@ import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { Fragment } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { useCallback } from "react";
-
 import { useContext, useState } from "react";
 import ApiContext from "../../../context/context";
 import { Typography } from "@mui/material";
-
-import { useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const CategoryModal = () => {
   const [state, setState] = React.useState({
@@ -92,11 +82,18 @@ const CategoryModal = () => {
 
     const updateNewCategory = { ...newCategory, id: newId + 1 };
 
-    setCategories((prev) => [...prev, updateNewCategory]);
+    setCategories((prev) => [updateNewCategory, ...prev]);
 
     feedbackSuccess();
 
     toggleDrawer("right", false)();
+
+    setNewCategory({
+      rootCategoryId: 1,
+      id: 0,
+      categoryName: "",
+      categoryNameRu: "",
+    });
   };
 
   const list = () => (

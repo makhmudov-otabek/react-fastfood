@@ -44,7 +44,6 @@ const CustomerModal = () => {
 
   const changeIsActive = () => {
     setNewCustomer((prev) => ({ ...prev, isActive: !prev.isActive }));
-    console.log(newCustomer);
   };
 
   const feedbackError = () =>

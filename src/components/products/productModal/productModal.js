@@ -92,9 +92,11 @@ const AddProductModal = () => {
       return Math.max(accumlator, element.id);
     }, 0);
 
-    setNewProduct((prev) => ({ ...prev, id: newId + 1 }));
+    const updatedNewProduct = newProduct;
 
-    setProducts((prev) => [...prev, newProduct]);
+    updatedNewProduct.id = newId + 1;
+
+    setProducts((prev) => [updatedNewProduct, ...prev]);
 
     toggleDrawer("right", false)();
 

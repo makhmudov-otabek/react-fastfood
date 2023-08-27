@@ -318,7 +318,7 @@ const SwipeableTemporaryDrawer = ({
       orders: [...updatedOrders],
     };
 
-    setOrders((prevState) => [...prevState, newOrder]);
+    setOrders((prevState) => [newOrder, ...prevState]);
 
     setNewUserInfo({
       name: "",
@@ -348,13 +348,10 @@ const SwipeableTemporaryDrawer = ({
     <Box
       sx={{ paddingX: "40px", paddingY: "20px", width: "1030px" }}
       role="presentation"
-      //   onClick={toggleDrawer(anchor, false)}
     >
       <Box
         sx={{
           display: "flex",
-          // justifyContent: "space-between",
-          // alignItems: "start",
           gap: "20px",
         }}
       >

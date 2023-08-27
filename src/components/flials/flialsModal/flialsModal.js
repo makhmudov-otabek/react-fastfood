@@ -101,7 +101,7 @@ const FlialModal = () => {
 
     const updatedNewFlial = { ...newFlial, id: newId + 1 };
 
-    setFlials((prev) => [...prev, updatedNewFlial]);
+    setFlials((prev) => [updatedNewFlial, ...prev]);
 
     feedbackSuccess();
 

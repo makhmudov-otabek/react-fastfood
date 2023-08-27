@@ -51,6 +51,8 @@ const ShowFlials = () => {
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.190116400739!2d69.22590977572126!3d41.326479099771404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8bb7a0ebbae3%3A0xf9e01b5d45fc68cd!2sPDP%20Academy!5e0!3m2!1sen!2s!4v1692743768084!5m2!1sen!2s",
   });
 
+  const [originalFlials, setOriginalFlials] = useState(flials);
+
   const searchProduct = (e) => {
     setSearchValue(e.target.value);
 
@@ -59,9 +61,9 @@ const ShowFlials = () => {
         flial.flialNameUz.toLowerCase().includes(e.target.value.toLowerCase())
       );
 
-      setSearchedData(updatedData);
+      setFlials(updatedData);
     } else if (e.target.value.trim() === "") {
-      setSearchedData(flials);
+      setFlials(originalFlials);
     }
   };
 
@@ -70,7 +72,7 @@ const ShowFlials = () => {
   };
 
   useEffect(() => {
-    setEditFlial(flials[activeEditingFlialId - 1]);
+    setEditFlial(flials[activeEditingFlialId]);
   }, [activeEditingFlialId]);
 
   useEffect(() => {
@@ -109,14 +111,6 @@ const ShowFlials = () => {
     setEditFlial((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  useEffect(() => {
-    setSearchedData(
-      flials.reduceRight((accumlator, element) => {
-        return [...accumlator, element];
-      }, [])
-    );
-  }, [flials]);
-
   const submitEditedFlial = () => {
     const updatedFlialsData = flials;
 
@@ -130,7 +124,7 @@ const ShowFlials = () => {
   };
 
   const deleteFlial = (id) => {
-    const updatedCategory = flials.filter((category) => category.id !== id);
+    const updatedCategory = flials.filter((category, index) => index !== id);
 
     setFlials(updatedCategory);
 
@@ -432,8 +426,8 @@ const ShowFlials = () => {
           <Typography>Hech qanday kategoriya yo'q __(-_-)__</Typography>
         )} */}
 
-        {searchedData.map((searchedFlial) => {
-          if (searchedData.length === 0) {
+        {flials.map((searchedFlial, flialIndex) => {
+          if (flials.length === 0) {
             return (
               <Typography>Hech qanday kategoriya yo'q __(-_-)__</Typography>
             );
@@ -505,7 +499,7 @@ const ShowFlials = () => {
                     <Button
                       onClick={() => {
                         toggleDrawer("right", true)();
-                        changeActiveId(searchedFlial.id);
+                        changeActiveId(flialIndex);
                       }}
                       sx={{
                         minWidth: "40px",
@@ -526,7 +520,7 @@ const ShowFlials = () => {
                         border: "3px solid #EDEFF3",
                       }}
                       onClick={() => {
-                        deleteFlial(searchedFlial.id);
+                        deleteFlial(flialIndex);
                       }}
                     >
                       <BiTrash style={{ fontSize: "20px", color: "#2D3A45" }} />

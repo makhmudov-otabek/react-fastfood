@@ -28,17 +28,9 @@ const ShowCustomers = () => {
 
   const { customers, setCustomers } = useContext(ApiContext);
 
-  const [sliceNumber, setSliceNumber] = useState(5);
-
   const [searchValue, setSearchValue] = useState("");
 
-  const [activeEditingCustomerId, setActiveEditingCustomerId] = useState(1);
-
-  const reverse = customers.reduceRight((accumlator, element) => {
-    return [...accumlator, element];
-  }, []);
-
-  const [searchedData, setSearchedData] = useState(reverse);
+  const [activeEditingCustomerId, setActiveEditingCustomerId] = useState(0);
 
   const [editCustomer, setEditCustomer] = useState({
     id: 0,
@@ -48,6 +40,8 @@ const ShowCustomers = () => {
     isActive: true,
   });
 
+  const [originalCustomersData, setOriginalCustomersData] = useState(customers);
+
   const searchCustomer = (e) => {
     setSearchValue(e.target.value);
 
@@ -56,18 +50,18 @@ const ShowCustomers = () => {
         customer.name.toLowerCase().includes(e.target.value.toLowerCase())
       );
 
-      setSearchedData(updatedData);
+      setCustomers(updatedData);
     } else if (e.target.value.trim() === "") {
-      setSearchedData(customers);
+      setCustomers(originalCustomersData);
     }
   };
 
-  const changeActiveId = (id) => {
-    setActiveEditingCustomerId(id);
+  const changeActiveId = (index) => {
+    setActiveEditingCustomerId(index);
   };
 
   useEffect(() => {
-    setEditCustomer(customers[activeEditingCustomerId - 1]);
+    setEditCustomer(customers[activeEditingCustomerId]);
   }, [activeEditingCustomerId]);
 
   const feedbackInfo = () =>
@@ -94,7 +88,7 @@ const ShowCustomers = () => {
       theme: "light",
     });
 
-  const editCategoryOnChange = (e) => {
+  const editCustomerOnChange = (e) => {
     setEditCustomer((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -108,12 +102,6 @@ const ShowCustomers = () => {
     feedbackInfo();
 
     toggleDrawer("right", false)();
-
-    const reverse = updatedCustomersData.reduceRight((accumlator, element) => {
-      return [...accumlator, element];
-    }, []);
-
-    setSearchedData(reverse);
   };
 
   const deleteCustomer = (id) => {
@@ -122,6 +110,22 @@ const ShowCustomers = () => {
     setCustomers(updatedCustomers);
 
     feedbackWarning();
+  };
+
+  const changeStatus = (index) => {
+    const updatedCustomersData = [...customers];
+
+    const updatedCustomers = updatedCustomersData.map((customer, i) => {
+      if (i === index) {
+        return {
+          ...customer,
+          isActive: !customer.isActive,
+        };
+      }
+      return customer;
+    });
+
+    setCustomers(updatedCustomers);
   };
 
   const list = (anchor) => {
@@ -154,7 +158,7 @@ const ShowCustomers = () => {
             id="name"
             name="name"
             value={editCustomer.name}
-            onChange={editCategoryOnChange}
+            onChange={editCustomerOnChange}
           />
 
           <label htmlFor="phone">Mijoz telefon raqami</label>
@@ -166,7 +170,7 @@ const ShowCustomers = () => {
               "& #phone": { padding: "7px 12px" },
             }}
             id="phone"
-            onChange={editCategoryOnChange}
+            onChange={editCustomerOnChange}
             value={editCustomer.phone}
           />
 
@@ -179,7 +183,7 @@ const ShowCustomers = () => {
               "& #orderCount": { padding: "7px 12px" },
             }}
             id="orderCount"
-            onChange={editCategoryOnChange}
+            onChange={editCustomerOnChange}
             value={editCustomer.orderCount}
           />
         </Box>
@@ -202,29 +206,6 @@ const ShowCustomers = () => {
       </Box>
     );
   };
-
-  const setStatusCustomer = () => {
-    const updatedData = customers;
-    updatedData[customers.length - activeEditingCustomerId] = {
-      ...updatedData[customers.length - activeEditingCustomerId],
-      isActive:
-        !updatedData[customers.length - activeEditingCustomerId].isActive,
-    };
-
-    const reverse = updatedData.reduceRight((accumlator, element) => {
-      return [...accumlator, element];
-    }, []);
-
-    setCustomers(updatedData);
-  };
-
-  useEffect(() => {
-    const reverse = customers.reduceRight((accumlator, element) => {
-      return [...accumlator, element];
-    }, []);
-
-    setSearchedData(reverse);
-  }, [customers]);
 
   return (
     <Box>
@@ -423,8 +404,8 @@ const ShowCustomers = () => {
           <Typography>Hech qanday kategoriya yo'q __(-_-)__</Typography>
         )} */}
 
-        {searchedData.map((customer) => {
-          if (searchedData.length === 0) {
+        {customers.map((customer, customerIndex) => {
+          if (customers.length === 0) {
             return (
               <Typography>Hech qanday kategoriya yo'q __(-_-)__</Typography>
             );
@@ -478,8 +459,7 @@ const ShowCustomers = () => {
                   >
                     <Button
                       onClick={() => {
-                        changeActiveId(customer.id);
-                        setStatusCustomer();
+                        changeStatus(customerIndex);
                       }}
                       sx={{
                         minWidth: "40px",
@@ -502,7 +482,7 @@ const ShowCustomers = () => {
                     <Button
                       onClick={() => {
                         toggleDrawer("right", true)();
-                        changeActiveId(customer.id);
+                        changeActiveId(customerIndex);
                       }}
                       sx={{
                         minWidth: "40px",
